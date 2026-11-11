@@ -1,0 +1,3504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chinese LevelUp — Pinyin & Translation Quiz</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#18233b;--text:#edf2ff;--muted:#9eacc8;--line:#2a3855;--accent:#8b7cff;--accent2:#58d6bd;--good:#2dd4a7;--bad:#ff7188}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172344 0%,var(--bg) 55%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer;border:0}button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.wrap{max-width:1100px;margin:auto;padding:28px 20px 56px}.top{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.25rem;letter-spacing:-.03em}.logo{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#56c9df);color:#fff;font-weight:900}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:.85rem}
+.hero{margin:10px 0 28px}.eyebrow{color:var(--accent2);font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;font-weight:800}.hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.08;letter-spacing:-.055em;margin:10px 0}.hero p{color:var(--muted);max-width:650px;margin:0}
+.panel{background:rgba(18,26,45,.92);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 18px 50px #0002}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}.toolbar h2{margin:0;font-size:1.15rem}.modes{display:flex;gap:6px;padding:5px;background:#0b1223;border:1px solid var(--line);border-radius:13px}.mode{padding:9px 14px;border-radius:9px;color:var(--muted);background:transparent;font-weight:700}.mode.active{background:var(--accent);color:white}
+.levels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.level{position:relative;text-align:left;padding:16px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:15px;color:var(--text);min-height:120px;transition:.18s}.level:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}.level:disabled{opacity:.42;cursor:not-allowed}.level .num{font-size:1.5rem;font-weight:850;letter-spacing:-.04em}.level .name{font-weight:750;font-size:.92rem}.level small{color:var(--muted);display:block;margin-top:5px}.level .check{position:absolute;right:12px;top:10px;color:var(--good)}
+.note{color:var(--muted);font-size:.9rem;margin:18px 0 0}.hidden{display:none!important}
+.quizhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.quizhead h2{margin:0;font-size:1.35rem}.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 12px;font-size:.88rem;color:var(--muted)}.stat strong{color:var(--text)}
+.timer-stat strong{color:var(--accent2);font-variant-numeric:tabular-nums}.timer-stat.urgent strong{color:var(--bad)}
+.progress{height:8px;background:#26314a;border-radius:99px;overflow:hidden;margin:18px 0 24px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s}
+.qmeta{color:var(--accent2);font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.question{font-size:clamp(1.25rem,3vw,1.8rem);line-height:1.3;letter-spacing:-.025em;margin:10px 0 22px}.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.option{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:16px;background:#17223a;color:var(--text);border:1px solid var(--line);border-radius:14px;min-height:68px;transition:.15s}.option:hover:not(:disabled){border-color:#8b7cff;background:#202c4a}.letter{display:grid;place-items:center;flex:0 0 28px;height:28px;border:1px solid #475574;border-radius:8px;color:#c6d0e7;font-size:.85rem;font-weight:800}.option.selected{border-color:var(--accent);background:#2b2851}.option.correct{border-color:var(--good);background:#123a36}.option.wrong{border-color:var(--bad);background:#421f31}.option:disabled{cursor:default}
+.feedback{margin-top:16px;padding:13px 15px;border-radius:12px;background:#0c1427;color:var(--muted);border:1px solid var(--line)}.feedback.good{border-color:#226d5b;color:#a6f5df}.feedback.bad{border-color:#81384a;color:#ffc1cc}
+.quizfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px}.btn{padding:11px 17px;border-radius:11px;font-weight:800;background:var(--accent);color:white}.btn.secondary{background:#202c45;border:1px solid var(--line);color:var(--text)}.btn:disabled{opacity:.4;cursor:not-allowed}.live-score{color:var(--muted);font-size:.9rem}
+.result{text-align:center;padding:20px 0}.score-ring{width:130px;height:130px;border-radius:50%;margin:20px auto;display:grid;place-items:center;background:conic-gradient(var(--accent2) var(--score),#283550 0);position:relative}.score-ring:before{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--panel)}.score-ring div{position:relative}.score-ring strong{font-size:1.9rem;display:block}.result h2{font-size:2rem;margin:8px 0}.result p{color:var(--muted)}.review{text-align:left;margin-top:25px}.review-item{border-top:1px solid var(--line);padding:15px 0}.review-item strong{display:block;margin-bottom:6px}.review-item .right{color:var(--good)}.review-item .wrongtext{color:var(--bad)}footer{text-align:center;color:#71809e;font-size:.8rem;margin-top:24px}
+@media(max-width:720px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}.options{grid-template-columns:1fr}.panel{padding:18px}.top{align-items:flex-start}.pill{font-size:.75rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand"><div class="logo">L</div><span>Chinese <span style="color:var(--accent2)">LevelUp</span></span></div><div class="pill">10 levels · 150 Chinese questions</div></header>
+<section class="hero"><div class="eyebrow">Pinyin · Meaning · Translation</div><h1>Read Chinese.<br>Think in Chinese.</h1><p>Learn Chinese from beginner to advanced: recognize characters, read pinyin with tone marks, understand English meanings, translate both directions, and master grammar and idioms. Choose a mode and take on one level at a time.</p></section>
+<section id="home" class="panel">
+ <div class="toolbar"><h2>Choose your challenge</h2><div class="modes" role="group" aria-label="Quiz mode"><button class="mode active" data-mode="quiz">Quiz mode</button><button class="mode" data-mode="exam">Exam mode</button></div></div>
+ <div id="levels" class="levels"></div><p class="note" id="modeNote">Quiz mode gives instant feedback and updates your score as you answer.</p>
+</section>
+<section id="game" class="panel hidden" aria-live="polite">
+ <div class="quizhead"><div><div class="qmeta" id="levelLabel">LEVEL 1</div><h2 id="gameTitle">Beginner Basics</h2></div><div class="stats"><div class="stat">Question <strong id="qCount">1/15</strong></div><div class="stat timer-stat" id="timerStat">Time <strong id="timer">10</strong><span id="timerUnit">s</span></div><div class="stat" id="scoreStat">Score <strong id="score">0</strong></div></div></div>
+ <div class="progress"><span id="progressFill"></span></div>
+ <div class="qmeta" id="topicLabel">FOUNDATIONS</div><div class="question" id="question"></div><div class="options" id="options"></div>
+ <div id="feedback" class="feedback hidden"></div>
+ <div class="quizfoot"><button id="quitBtn" class="btn secondary">← Levels</button><span class="live-score" id="liveScore"></span><button id="nextBtn" class="btn" disabled>Next question →</button></div>
+</section>
+<section id="results" class="panel hidden"></section>
+<footer>Vanilla HTML, CSS and JavaScript · 150 Chinese questions · Pinyin includes tone marks</footer>
+</div>
+<script>
+const titles=["Pinyin & First Words", "Numbers & Everyday Words", "Basic Sentences", "Questions & Daily Life", "Grammar & Useful Patterns", "Intermediate Translation", "Advanced Nuance", "Complex Sentences & Register", "Idioms & Fine Distinctions", "Mastery: Translation & Nuance"];
+const descriptions=["Start with sounds and greetings", "Build everyday vocabulary", "Make simple sentences", "Ask and answer daily questions", "Use common grammar patterns", "Translate longer sentences", "Understand subtle meanings", "Read formal Chinese", "Master idioms and distinctions", "Translate nuanced Chinese with confidence"];
+// 150 Chinese-learning questions: characters, pinyin with tones, English meanings, translations, grammar, and idioms.
+const banks = [
+  [
+    [
+      "What is the pinyin for 你好?",
+      "Pinyin",
+      "nǐ hǎo",
+      "nǐ hào",
+      "ní hǎo",
+      "nì hǎo",
+      0
+    ],
+    [
+      "What does 谢谢 (xièxie) mean?",
+      "Meaning",
+      "Thank you",
+      "Sorry",
+      "Goodbye",
+      "Please",
+      0
+    ],
+    [
+      "Which Chinese character means “I / me”?",
+      "Vocabulary",
+      "我 (wǒ)",
+      "你 (nǐ)",
+      "他 (tā)",
+      "她 (tā)",
+      0
+    ],
+    [
+      "What is the pinyin for 中国?",
+      "Pinyin",
+      "Zhōngguó",
+      "Zhōnggǔ",
+      "Zōngguó",
+      "Zhōngguō",
+      0
+    ],
+    [
+      "What does 再见 (zàijiàn) mean?",
+      "Meaning",
+      "Goodbye",
+      "Hello",
+      "Good morning",
+      "Excuse me",
+      0
+    ],
+    [
+      "Which means “you”?",
+      "Vocabulary",
+      "你 (nǐ)",
+      "我 (wǒ)",
+      "们 (men)",
+      "他 (tā)",
+      0
+    ],
+    [
+      "What is the pinyin for 好?",
+      "Pinyin",
+      "hǎo",
+      "hào",
+      "háo",
+      "hāo",
+      0
+    ],
+    [
+      "What does 是 (shì) mean in a basic sentence?",
+      "Meaning",
+      "To be / am / is / are",
+      "To have",
+      "To go",
+      "To eat",
+      0
+    ],
+    [
+      "Which means “no / not” in many basic sentences?",
+      "Vocabulary",
+      "不 (bù)",
+      "很 (hěn)",
+      "也 (yě)",
+      "都 (dōu)",
+      0
+    ],
+    [
+      "What is the pinyin for 人?",
+      "Pinyin",
+      "rén",
+      "rèn",
+      "lén",
+      "rěn",
+      0
+    ],
+    [
+      "What does 老师 (lǎoshī) mean?",
+      "Meaning",
+      "Teacher",
+      "Student",
+      "Doctor",
+      "Friend",
+      0
+    ],
+    [
+      "Which Chinese word means “friend”?",
+      "Vocabulary",
+      "朋友 (péngyou)",
+      "学生 (xuésheng)",
+      "老师 (lǎoshī)",
+      "家 (jiā)",
+      0
+    ],
+    [
+      "What is the pinyin for 水?",
+      "Pinyin",
+      "shuǐ",
+      "suǐ",
+      "shuì",
+      "shuí",
+      0
+    ],
+    [
+      "What does 请 (qǐng) commonly mean?",
+      "Meaning",
+      "Please / to invite",
+      "Thank you",
+      "Goodbye",
+      "Tomorrow",
+      0
+    ],
+    [
+      "Which means “good”?",
+      "Vocabulary",
+      "好 (hǎo)",
+      "大 (dà)",
+      "小 (xiǎo)",
+      "多 (duō)",
+      0
+    ]
+  ],
+  [
+    [
+      "What does 一 (yī) mean?",
+      "Numbers",
+      "One",
+      "Two",
+      "Three",
+      "Ten",
+      0
+    ],
+    [
+      "What is the pinyin for 四?",
+      "Pinyin",
+      "sì",
+      "shì",
+      "sǐ",
+      "sī",
+      0
+    ],
+    [
+      "What does 多少 (duōshao) mean?",
+      "Meaning",
+      "How many / how much",
+      "Where",
+      "Who",
+      "When",
+      0
+    ],
+    [
+      "Which means “today”?",
+      "Vocabulary",
+      "今天 (jīntiān)",
+      "明天 (míngtiān)",
+      "昨天 (zuótiān)",
+      "今年 (jīnnián)",
+      0
+    ],
+    [
+      "What is the pinyin for 星期五?",
+      "Pinyin",
+      "xīngqī wǔ",
+      "xīngqí wǔ",
+      "xīngqī wù",
+      "xīngqī yǔ",
+      0
+    ],
+    [
+      "What does 再 (zài) mean in common expressions?",
+      "Meaning",
+      "Again / once more",
+      "Already",
+      "Never",
+      "Yesterday",
+      0
+    ],
+    [
+      "Which means “water”?",
+      "Vocabulary",
+      "水 (shuǐ)",
+      "火 (huǒ)",
+      "木 (mù)",
+      "土 (tǔ)",
+      0
+    ],
+    [
+      "What is the pinyin for 八?",
+      "Pinyin",
+      "bā",
+      "bá",
+      "bǎ",
+      "bà",
+      0
+    ],
+    [
+      "What does 家 (jiā) mean?",
+      "Meaning",
+      "Home / family",
+      "School",
+      "Shop",
+      "Country",
+      0
+    ],
+    [
+      "Which means “to eat”?",
+      "Verbs",
+      "吃 (chī)",
+      "喝 (hē)",
+      "看 (kàn)",
+      "听 (tīng)",
+      0
+    ],
+    [
+      "What is the pinyin for 学生?",
+      "Pinyin",
+      "xuésheng",
+      "xuěsheng",
+      "xuéshēng",
+      "xuésen",
+      0
+    ],
+    [
+      "What does 现在 (xiànzài) mean?",
+      "Meaning",
+      "Now",
+      "Later",
+      "Always",
+      "Last year",
+      0
+    ],
+    [
+      "Which means “tomorrow”?",
+      "Vocabulary",
+      "明天 (míngtiān)",
+      "昨天 (zuótiān)",
+      "今天 (jīntiān)",
+      "晚上 (wǎnshang)",
+      0
+    ],
+    [
+      "What is the pinyin for 十?",
+      "Pinyin",
+      "shí",
+      "sì",
+      "xí",
+      "shǐ",
+      0
+    ],
+    [
+      "What does 多少钱 (duōshao qián) ask?",
+      "Meaning",
+      "How much money / how much does it cost?",
+      "What time is it?",
+      "Where are you going?",
+      "How old are you?",
+      0
+    ]
+  ],
+  [
+    [
+      "Translate 我是学生。",
+      "Translation",
+      "I am a student.",
+      "You are a teacher.",
+      "I have a student.",
+      "He is at school.",
+      0
+    ],
+    [
+      "What does 你好吗？ mean?",
+      "Meaning",
+      "How are you?",
+      "What is your name?",
+      "Are you a student?",
+      "Where are you?",
+      0
+    ],
+    [
+      "Choose the pinyin for 我喜欢茶。",
+      "Pinyin",
+      "Wǒ xǐhuan chá.",
+      "Wǒ xīhuān chā.",
+      "Wǒ xǐhuan cài.",
+      "Wǒ xǐhuān jiǔ.",
+      0
+    ],
+    [
+      "How do you say “My name is Li Ming” in Chinese?",
+      "Translation",
+      "我叫李明。",
+      "我是李明吗？",
+      "你叫李明。",
+      "李明叫我。",
+      0
+    ],
+    [
+      "What does 你叫什么名字？ mean?",
+      "Meaning",
+      "What is your name?",
+      "Where do you live?",
+      "How old are you?",
+      "What do you like?",
+      0
+    ],
+    [
+      "Which word means “to like”?",
+      "Verbs",
+      "喜欢 (xǐhuan)",
+      "认识 (rènshi)",
+      "工作 (gōngzuò)",
+      "学习 (xuéxí)",
+      0
+    ],
+    [
+      "Translate 他不忙。",
+      "Translation",
+      "He is not busy.",
+      "He is very busy.",
+      "She is not here.",
+      "He is not a teacher.",
+      0
+    ],
+    [
+      "What is the pinyin for 我们是朋友。",
+      "Pinyin",
+      "Wǒmen shì péngyou.",
+      "Wǒmen shí péngyǒu.",
+      "Wǒmen zài péngyou.",
+      "Wǒmen shì péngyǒu ma?",
+      0
+    ],
+    [
+      "What does 她是我的妈妈。 mean?",
+      "Meaning",
+      "She is my mother.",
+      "He is my father.",
+      "She is my teacher.",
+      "That is my home.",
+      0
+    ],
+    [
+      "Which is the usual Chinese word order for “I drink tea”?",
+      "Grammar",
+      "我喝茶。",
+      "喝我茶。",
+      "茶我喝是。",
+      "我茶喝。",
+      0
+    ],
+    [
+      "What does 你呢？ mean in conversation?",
+      "Meaning",
+      "And you? / What about you?",
+      "Who are you?",
+      "Where is it?",
+      "Why not?",
+      0
+    ],
+    [
+      "Translate 我也学习中文。",
+      "Translation",
+      "I also study Chinese.",
+      "I teach Chinese too.",
+      "I do not study Chinese.",
+      "I study English now.",
+      0
+    ],
+    [
+      "Which means “to know / be acquainted with a person”?",
+      "Verbs",
+      "认识 (rènshi)",
+      "知道 (zhīdào)",
+      "觉得 (juéde)",
+      "希望 (xīwàng)",
+      0
+    ],
+    [
+      "What does 这是我的书。 mean?",
+      "Meaning",
+      "This is my book.",
+      "That is your book.",
+      "This book is new.",
+      "I have a book.",
+      0
+    ],
+    [
+      "Which particle commonly marks a yes/no question at the end of a sentence?",
+      "Grammar",
+      "吗 (ma)",
+      "的 (de)",
+      "了 (le)",
+      "过 (guo)",
+      0
+    ]
+  ],
+  [
+    [
+      "Translate 你住在哪里？",
+      "Translation",
+      "Where do you live?",
+      "Where are you going?",
+      "Who do you live with?",
+      "Do you like this place?",
+      0
+    ],
+    [
+      "What does 因为 (yīnwèi) mean?",
+      "Meaning",
+      "Because",
+      "But",
+      "Therefore",
+      "Although",
+      0
+    ],
+    [
+      "Choose the pinyin for 你会说英语吗？",
+      "Pinyin",
+      "Nǐ huì shuō Yīngyǔ ma?",
+      "Nǐ huǐ shuō Yīngyǔ ma?",
+      "Nǐ huì shuō Yīngyǔ ne?",
+      "Nǐ kuài shuō Yīngyǔ ma?",
+      0
+    ],
+    [
+      "How do you say “I don’t understand” in Chinese?",
+      "Translation",
+      "我不明白。",
+      "我不认识。",
+      "我不喜欢。",
+      "我没时间。",
+      0
+    ],
+    [
+      "What does 为什么 (wèishénme) mean?",
+      "Meaning",
+      "Why",
+      "When",
+      "Which",
+      "How many",
+      0
+    ],
+    [
+      "Which word means “because”?",
+      "Vocabulary",
+      "因为 (yīnwèi)",
+      "所以 (suǒyǐ)",
+      "但是 (dànshì)",
+      "如果 (rúguǒ)",
+      0
+    ],
+    [
+      "Translate 现在几点？",
+      "Translation",
+      "What time is it now?",
+      "What day is it today?",
+      "How old are you now?",
+      "When do you leave?",
+      0
+    ],
+    [
+      "What does 一点儿 (yìdiǎnr) often mean?",
+      "Meaning",
+      "A little",
+      "A lot",
+      "Every day",
+      "Immediately",
+      0
+    ],
+    [
+      "Which means “to work”?",
+      "Verbs",
+      "工作 (gōngzuò)",
+      "休息 (xiūxi)",
+      "旅行 (lǚxíng)",
+      "运动 (yùndòng)",
+      0
+    ],
+    [
+      "What does 我想买这个。 mean?",
+      "Meaning",
+      "I want to buy this.",
+      "I already bought that.",
+      "I want to sell this.",
+      "I like that shop.",
+      0
+    ],
+    [
+      "Which is the natural translation of “Where is the bathroom?”",
+      "Translation",
+      "洗手间在哪里？",
+      "洗手间是什么？",
+      "你有洗手间吗？",
+      "洗手间多少钱？",
+      0
+    ],
+    [
+      "What does 但是 (dànshì) mean?",
+      "Meaning",
+      "But / however",
+      "Because",
+      "So / therefore",
+      "If",
+      0
+    ],
+    [
+      "Choose the pinyin for 我每天坐公共汽车上班。",
+      "Pinyin",
+      "Wǒ měitiān zuò gōnggòng qìchē shàngbān.",
+      "Wǒ měitiān zuò gōnggòng qìchē xiàbān.",
+      "Wǒ míngtiān zuò gōngjiāo shàngbān.",
+      "Wǒ měitiān zuò gōnggòng qǐchē shàngbān.",
+      0
+    ],
+    [
+      "What does 可以 (kěyǐ) express in many contexts?",
+      "Meaning",
+      "Can / may / be allowed to",
+      "Must not",
+      "Already did",
+      "Would rather",
+      0
+    ],
+    [
+      "Translate 请再说一遍。",
+      "Translation",
+      "Please say it one more time.",
+      "Please write it down.",
+      "Please speak more slowly.",
+      "Please wait outside.",
+      0
+    ]
+  ],
+  [
+    [
+      "In 我比他高, what does 比 (bǐ) indicate?",
+      "Grammar",
+      "A comparison: taller than him",
+      "A reason",
+      "A completed action",
+      "A future plan",
+      0
+    ],
+    [
+      "What does 虽然……但是…… express?",
+      "Grammar",
+      "Although… nevertheless…",
+      "If… then…",
+      "Because… so…",
+      "Not only… but also…",
+      0
+    ],
+    [
+      "Translate 我已经吃过饭了。",
+      "Translation",
+      "I have already eaten.",
+      "I will eat soon.",
+      "I have never eaten.",
+      "I am cooking now.",
+      0
+    ],
+    [
+      "Which sentence means “I have been to China”?",
+      "Grammar",
+      "我去过中国。",
+      "我要去中国。",
+      "我在中国。",
+      "我去中国了吧。",
+      0
+    ],
+    [
+      "What is the pinyin for 如果明天下雨，我们就不去。",
+      "Pinyin",
+      "Rúguǒ míngtiān xiàyǔ, wǒmen jiù bú qù.",
+      "Rúguǒ míngtiān xiàyǔ, wǒmen jiǔ bú qù.",
+      "Suǒyǐ míngtiān xiàyǔ, wǒmen jiù bú qù.",
+      "Rúguǒ míngtiān xiàxuě, wǒmen jiù bú qù.",
+      0
+    ],
+    [
+      "What does 终于 (zhōngyú) mean?",
+      "Meaning",
+      "Finally / at last",
+      "Suddenly",
+      "Usually",
+      "Perhaps",
+      0
+    ],
+    [
+      "Which sentence correctly says “I am reading a book”?",
+      "Grammar",
+      "我正在看书。",
+      "我看书过。",
+      "我把看书。",
+      "我书正在看了过。",
+      0
+    ],
+    [
+      "In 他的中文说得很好, what does 得 (de) do?",
+      "Grammar",
+      "Introduces a complement describing how an action is done",
+      "Marks possession",
+      "Marks a yes/no question",
+      "Means “because”",
+      0
+    ],
+    [
+      "Translate 这件衣服比那件便宜。",
+      "Translation",
+      "This item of clothing is cheaper than that one.",
+      "This item is more expensive than that one.",
+      "That item is as cheap as this one.",
+      "This clothing is too small.",
+      0
+    ],
+    [
+      "What does 除了……以外……还…… mean?",
+      "Grammar",
+      "Besides… also…",
+      "Neither… nor…",
+      "As soon as… then…",
+      "Even though… still…",
+      0
+    ],
+    [
+      "Which sentence means “I have not finished yet”?",
+      "Grammar",
+      "我还没做完。",
+      "我已经做完了。",
+      "我做完以前。",
+      "我不再做完。",
+      0
+    ],
+    [
+      "What does 只要……就…… express?",
+      "Grammar",
+      "As long as… then…",
+      "Even if… still…",
+      "Not until… then…",
+      "Rather than…",
+      0
+    ],
+    [
+      "Choose the correct pinyin for 这本书我看了两遍。",
+      "Pinyin",
+      "Zhè běn shū wǒ kàn le liǎng biàn.",
+      "Zhè běn shū wǒ kàn liǎng piàn.",
+      "Zhè běn shū wǒ kàn zhe liǎng biàn.",
+      "Zhèi běn shū wǒ kàn le liǎng biān.",
+      0
+    ],
+    [
+      "What does 原来 (yuánlái) often mean?",
+      "Meaning",
+      "It turns out / originally",
+      "Immediately",
+      "In the future only",
+      "On purpose",
+      0
+    ],
+    [
+      "Which sentence uses 把 to highlight what happens to an object?",
+      "Grammar",
+      "请把门关上。",
+      "门比窗户高。",
+      "我在门旁边。",
+      "门开了吗？",
+      0
+    ]
+  ],
+  [
+    [
+      "Translate 要是你早点告诉我，我就能帮你了。",
+      "Translation",
+      "If you had told me earlier, I could have helped you.",
+      "If you tell me tomorrow, I will help you.",
+      "I told you earlier that I needed help.",
+      "You can help me if I ask later.",
+      0
+    ],
+    [
+      "What does 难怪 (nánguài) mean?",
+      "Meaning",
+      "No wonder",
+      "Nevertheless",
+      "In the meantime",
+      "At first",
+      0
+    ],
+    [
+      "Choose the best translation: 他把钥匙忘在办公室了。",
+      "Translation",
+      "He left the keys behind at the office.",
+      "He found the keys in the office.",
+      "He gave the keys to the office.",
+      "He forgot where the office was.",
+      0
+    ],
+    [
+      "What does 与其……不如…… express?",
+      "Grammar",
+      "Rather than… it is better to…",
+      "Both…and…",
+      "Whether…or…",
+      "Not only…but also…",
+      0
+    ],
+    [
+      "What is the pinyin for 这件事没有你想的那么复杂。",
+      "Pinyin",
+      "Zhè jiàn shì méiyǒu nǐ xiǎng de nàme fùzá.",
+      "Zhè jiàn shì méiyǒu nǐ xiǎng dào nàme fùzá.",
+      "Zhè jiàn shì bù yǒu nǐ xiǎng de nàme fùzá.",
+      "Zhèi jiàn shì méiyǒu nǐ xiàng de nàme fǔzá.",
+      0
+    ],
+    [
+      "What does 反而 (fǎn’ér) mean?",
+      "Meaning",
+      "Instead / on the contrary",
+      "At the same time exactly",
+      "In advance",
+      "By accident only",
+      0
+    ],
+    [
+      "Translate 他不但会说中文，而且会写汉字。",
+      "Translation",
+      "He can not only speak Chinese, but also write Chinese characters.",
+      "He can speak neither Chinese nor write characters.",
+      "He only writes Chinese and cannot speak it.",
+      "He speaks Chinese because he writes characters.",
+      0
+    ],
+    [
+      "Which expression means “as soon as… then…”?",
+      "Grammar",
+      "一……就……",
+      "一边……一边……",
+      "不是……而是……",
+      "尽管……可是……",
+      0
+    ],
+    [
+      "What does 既然 (jìrán) usually mean?",
+      "Meaning",
+      "Since / now that",
+      "Unless",
+      "Despite",
+      "Perhaps",
+      0
+    ],
+    [
+      "Translate 这家店的服务比我预想的周到得多。",
+      "Translation",
+      "The service at this shop is much more thoughtful than I expected.",
+      "This shop is much busier than I expected.",
+      "The service is worse than before.",
+      "I expected the shop to be closed.",
+      0
+    ],
+    [
+      "What does 未必 (wèibì) mean?",
+      "Meaning",
+      "Not necessarily",
+      "Definitely",
+      "Not yet finished",
+      "Never again",
+      0
+    ],
+    [
+      "Choose the correct meaning of 何况 (hékuàng).",
+      "Meaning",
+      "Let alone / moreover",
+      "In other words",
+      "For example",
+      "As a result",
+      0
+    ],
+    [
+      "Translate 我本来打算坐火车，后来改乘飞机了。",
+      "Translation",
+      "I originally planned to take the train, but later switched to a plane.",
+      "I took a plane first and then a train.",
+      "I missed both the train and plane.",
+      "I plan to travel by train next time.",
+      0
+    ],
+    [
+      "What does 以免 (yǐmiǎn) mean?",
+      "Meaning",
+      "So as to avoid / lest",
+      "Because of",
+      "Even though",
+      "In addition to",
+      0
+    ],
+    [
+      "Which sentence means “The more you practice, the more fluent you become”?",
+      "Translation",
+      "你练习得越多，就会说得越流利。",
+      "你练习得很少，所以说得流利。",
+      "你越流利，就越不练习。",
+      "你练习以前不会说中文。",
+      0
+    ]
+  ],
+  [
+    [
+      "What does 未免 (wèimiǎn) often convey in a sentence such as 这也未免太贵了吧？",
+      "Nuance",
+      "That seems rather / a bit too expensive",
+      "It is certainly inexpensive",
+      "It has already been paid for",
+      "It is not available yet",
+      0
+    ],
+    [
+      "Translate 他嘴上答应了，心里却不以为然。",
+      "Translation",
+      "He agreed verbally, but inwardly he did not think much of it.",
+      "He refused to speak because he was nervous.",
+      "He was delighted both verbally and inwardly.",
+      "He agreed because everyone else did.",
+      0
+    ],
+    [
+      "What does 说来话长 (shuō lái huà cháng) mean?",
+      "Idioms",
+      "It is a long story",
+      "Speak louder",
+      "Words have great power",
+      "Time passes quickly",
+      0
+    ],
+    [
+      "What is the function of 就 in “我一到家就给你打电话”?",
+      "Grammar",
+      "It marks the immediate next action after arriving home",
+      "It marks possession",
+      "It means “although”",
+      "It makes the sentence a question",
+      0
+    ],
+    [
+      "Translate 这件事恐怕没那么简单。",
+      "Translation",
+      "I’m afraid this matter is not that simple.",
+      "This matter is definitely simple.",
+      "This matter has nothing to do with me.",
+      "I hope this matter ends quickly.",
+      0
+    ],
+    [
+      "What does 不至于 (bú zhìyú) mean?",
+      "Meaning",
+      "Not to the extent of / not likely to go so far as",
+      "Absolutely must",
+      "Already completed",
+      "No matter how",
+      0
+    ],
+    [
+      "Which is the best meaning of 话虽如此 (huà suī rúcǐ)?",
+      "Meaning",
+      "That said / even so",
+      "In short",
+      "For this reason",
+      "As far as I know",
+      0
+    ],
+    [
+      "Translate 他并不是不愿意帮忙，只是抽不出时间。",
+      "Translation",
+      "It is not that he is unwilling to help; he just cannot spare the time.",
+      "He refuses to help and has plenty of time.",
+      "He helped because he had no work.",
+      "He does not know how to help.",
+      0
+    ],
+    [
+      "What does 反倒 (fǎndào) signal?",
+      "Nuance",
+      "A contrary or unexpected outcome",
+      "A condition that must be met",
+      "A direct quotation",
+      "An action in the distant past",
+      0
+    ],
+    [
+      "What does 恰到好处 (qià dào hǎo chù) mean?",
+      "Idioms",
+      "Just right / perfectly appropriate",
+      "Too late to matter",
+      "Extremely complicated",
+      "Only by chance",
+      0
+    ],
+    [
+      "Choose the correct translation of 与其抱怨，不如想办法解决。",
+      "Translation",
+      "Rather than complain, it is better to find a way to solve it.",
+      "Complain first, then avoid solving it.",
+      "There is no way to solve the complaint.",
+      "The solution is worse than the problem.",
+      0
+    ],
+    [
+      "What does 未尝不可 (wèicháng bùkě) imply?",
+      "Nuance",
+      "It may well be acceptable / there is no reason it cannot be done",
+      "It is absolutely forbidden",
+      "It has never happened",
+      "It is impossible to decide",
+      0
+    ],
+    [
+      "Translate 他话里有话，我一时没听出来。",
+      "Translation",
+      "There was an implication in what he said, but I did not catch it at the time.",
+      "He spoke too quietly for anyone to hear.",
+      "He repeated the same sentence many times.",
+      "I understood every word immediately.",
+      0
+    ],
+    [
+      "What does 归根结底 (guīgēn jiédǐ) mean?",
+      "Idioms",
+      "Ultimately / when all is said and done",
+      "From beginning to end literally",
+      "In the meantime",
+      "Without any reason",
+      0
+    ],
+    [
+      "What does 既来之，则安之 mean in common use?",
+      "Idioms",
+      "Since you are here, make the best of it / settle in",
+      "Leave immediately when things are difficult",
+      "Always return to where you began",
+      "Never accept an invitation",
+      0
+    ]
+  ],
+  [
+    [
+      "Translate 尽管各方意见不一，会议还是取得了实质性进展。",
+      "Translation",
+      "Although the parties disagreed, the meeting still made substantial progress.",
+      "Because everyone agreed, the meeting was cancelled.",
+      "The meeting made no progress due to a lack of opinions.",
+      "Each party refused to attend the meeting.",
+      0
+    ],
+    [
+      "What does 鉴于 (jiànyú) commonly mean in formal writing?",
+      "Register",
+      "In view of / considering",
+      "Regardless of",
+      "In contrast to",
+      "In place of",
+      0
+    ],
+    [
+      "What is the nuance of 未必然 (wèibìrán) compared with 必然?",
+      "Nuance",
+      "Not necessarily inevitable, unlike “inevitable”",
+      "More certain than 必然",
+      "Exactly the same as 必然",
+      "Only describes the past",
+      0
+    ],
+    [
+      "Translate 这项政策旨在缓解短期压力，而非从根本上解决问题。",
+      "Translation",
+      "This policy aims to ease short-term pressure, not solve the problem at its root.",
+      "This policy solves every problem permanently.",
+      "This policy increases short-term pressure to solve nothing.",
+      "The policy was rejected before it began.",
+      0
+    ],
+    [
+      "What does 何尝不是 (hécháng bú shì) often suggest?",
+      "Nuance",
+      "Isn’t it also the case that…? / indeed…",
+      "It is certainly not the case",
+      "Why did it happen yesterday?",
+      "It has never been attempted",
+      0
+    ],
+    [
+      "Which phrase is a formal way to say “with regard to / concerning”?",
+      "Register",
+      "关于 (guānyú)",
+      "随便 (suíbiàn)",
+      "赶紧 (gǎnjǐn)",
+      "差不多 (chàbuduō)",
+      0
+    ],
+    [
+      "Translate 即便如此，我们也不能忽视潜在风险。",
+      "Translation",
+      "Even so, we still cannot ignore potential risks.",
+      "Therefore, there are no potential risks.",
+      "We should ignore the risk immediately.",
+      "The risks have already disappeared.",
+      0
+    ],
+    [
+      "What does 不容忽视 (bù róng hūshì) mean?",
+      "Meaning",
+      "Cannot be ignored",
+      "Easy to overlook",
+      "Not worth discussing",
+      "Should be delayed",
+      0
+    ],
+    [
+      "What does 反观 (fǎnguān) often do in formal argument?",
+      "Discourse",
+      "Introduces a contrasting look at another case or perspective",
+      "Signals a simple greeting",
+      "Marks a completed action",
+      "Introduces a direct question about time",
+      0
+    ],
+    [
+      "Translate 与会者普遍认为，后续落实比方案本身更为关键。",
+      "Translation",
+      "Participants generally believe follow-through is more crucial than the plan itself.",
+      "Participants rejected the plan before discussing it.",
+      "The plan is more important than implementation to everyone.",
+      "No participants expressed an opinion.",
+      0
+    ],
+    [
+      "What does 迄今为止 (qìjīn wéizhǐ) mean?",
+      "Meaning",
+      "Up to now / to date",
+      "From now on",
+      "At the same time",
+      "In the near future",
+      0
+    ],
+    [
+      "What is the function of 之所以 in “他之所以成功，是因为准备充分”?",
+      "Grammar",
+      "It introduces the reason for a result",
+      "It introduces a comparison of size",
+      "It marks a question",
+      "It indicates an action being done for someone",
+      0
+    ],
+    [
+      "Translate 凡涉及个人信息的内容，均须经过本人同意。",
+      "Translation",
+      "Any content involving personal information must have the person’s consent.",
+      "Personal information may always be shared without consent.",
+      "Only public information needs consent.",
+      "The person must avoid all personal information.",
+      0
+    ],
+    [
+      "What does 充其量 (chōng qí liàng) mean?",
+      "Meaning",
+      "At most",
+      "At least",
+      "On the contrary",
+      "For the time being",
+      0
+    ],
+    [
+      "Which phrase means “to take into account / give consideration to”?",
+      "Vocabulary",
+      "顾及 (gùjí)",
+      "拒绝 (jùjué)",
+      "拆除 (chāichú)",
+      "催促 (cuīcù)",
+      0
+    ]
+  ],
+  [
+    [
+      "What does 画蛇添足 (huà shé tiān zú) mean figuratively?",
+      "Idioms",
+      "To ruin something by adding unnecessary extras",
+      "To solve a problem elegantly",
+      "To prepare well in advance",
+      "To judge someone too quickly",
+      0
+    ],
+    [
+      "What does 亡羊补牢 (wáng yáng bǔ láo) teach?",
+      "Idioms",
+      "It is not too late to fix a problem after a loss",
+      "Never change a successful plan",
+      "Small problems always become disasters",
+      "Preparation is always useless",
+      0
+    ],
+    [
+      "Translate 他表面上不动声色，实际上早已胸有成竹。",
+      "Translation",
+      "He appeared calm, but in fact he already had a clear plan in mind.",
+      "He panicked openly and had no plan.",
+      "He did not understand the situation at all.",
+      "He changed his plan at the last moment.",
+      0
+    ],
+    [
+      "What does 差强人意 (chā qiáng rén yì) traditionally mean?",
+      "Fine distinctions",
+      "Fairly satisfactory / just about acceptable",
+      "Extremely disappointing in every case",
+      "Perfect beyond criticism",
+      "Impossible to understand",
+      0
+    ],
+    [
+      "What does 不无道理 (bù wú dàolǐ) imply?",
+      "Nuance",
+      "There is some truth or reason to it",
+      "It is completely irrational",
+      "It is proven beyond all doubt",
+      "It has no relation to the issue",
+      0
+    ],
+    [
+      "Translate 这番解释看似合理，细究起来却经不起推敲。",
+      "Translation",
+      "The explanation seems reasonable, but on closer examination it does not stand up to scrutiny.",
+      "The explanation is flawless when examined closely.",
+      "No one attempted to explain the issue.",
+      "The explanation became clearer with time.",
+      0
+    ],
+    [
+      "What does 见仁见智 (jiàn rén jiàn zhì) mean?",
+      "Idioms",
+      "Different people have different opinions",
+      "Everyone reaches the same conclusion",
+      "Wisdom can never be learned",
+      "People should avoid discussing ideas",
+      0
+    ],
+    [
+      "What does 无独有偶 (wú dú yǒu ǒu) mean?",
+      "Idioms",
+      "It is not the only case; there is a similar one",
+      "There is no possible comparison",
+      "One person must work alone",
+      "The result happened only once",
+      0
+    ],
+    [
+      "Translate 与其说这是偶然，不如说是长期积累的结果。",
+      "Translation",
+      "Rather than call it a coincidence, it is better to see it as the result of long-term accumulation.",
+      "It was an accident with no prior causes.",
+      "Long-term effort prevented any result.",
+      "The result was less important than chance.",
+      0
+    ],
+    [
+      "What does 不谋而合 (bù móu ér hé) mean?",
+      "Idioms",
+      "To coincide without prior agreement",
+      "To disagree after long discussion",
+      "To plan something secretly together",
+      "To change one’s mind repeatedly",
+      0
+    ],
+    [
+      "What does 事与愿违 (shì yǔ yuàn wéi) mean?",
+      "Idioms",
+      "Things turn out contrary to one’s wishes",
+      "Everything goes exactly as planned",
+      "A wish is granted immediately",
+      "A matter is easy to resolve",
+      0
+    ],
+    [
+      "Translate 他没有正面回答问题，而是避重就轻地谈了些无关紧要的事。",
+      "Translation",
+      "He avoided the main issue and talked about less important, unrelated matters instead.",
+      "He answered every part of the question directly.",
+      "He focused carefully on the most difficult issue.",
+      "He asked others to answer for him.",
+      0
+    ],
+    [
+      "What does 以偏概全 (yǐ piān gài quán) describe?",
+      "Idioms",
+      "Generalizing from a partial or unrepresentative case",
+      "Comparing two complete datasets fairly",
+      "Explaining a whole by listing every detail",
+      "Correcting a minor spelling error",
+      0
+    ],
+    [
+      "What does 不言而喻 (bù yán ér yù) mean?",
+      "Idioms",
+      "Self-evident / needing no explanation",
+      "Difficult to put into words",
+      "Impossible to prove",
+      "Open to only one interpretation",
+      0
+    ],
+    [
+      "What does 审时度势 (shěn shí duó shì) mean?",
+      "Idioms",
+      "Assess the situation and act accordingly",
+      "Ignore circumstances and persist",
+      "Wait without making any judgment",
+      "Copy another person’s decision",
+      0
+    ]
+  ],
+  [
+    [
+      "Translate 话不能说得太满，事情的发展往往出人意料。",
+      "Translation",
+      "One should not speak too categorically; events often develop unexpectedly.",
+      "People should always make absolute promises.",
+      "Events always unfold exactly as predicted.",
+      "It is best never to discuss future events.",
+      0
+    ],
+    [
+      "What does 退而求其次 (tuì ér qiú qí cì) mean?",
+      "Idioms",
+      "Settle for the next-best option",
+      "Refuse every alternative",
+      "Return to the original plan unchanged",
+      "Choose the most expensive option",
+      0
+    ],
+    [
+      "Translate 即使初衷是好的，也不意味着做法一定妥当。",
+      "Translation",
+      "Even if the original intention is good, that does not mean the approach is necessarily appropriate.",
+      "Good intentions guarantee an appropriate method.",
+      "The original intention was definitely harmful.",
+      "The approach is appropriate only if it is easy.",
+      0
+    ],
+    [
+      "What does 似是而非 (sì shì ér fēi) describe?",
+      "Idioms",
+      "Seemingly true but actually wrong or misleading",
+      "Obviously true in every respect",
+      "Completely unrelated to the topic",
+      "Accurate because it is traditional",
+      0
+    ],
+    [
+      "What is the most natural meaning of 这话听起来有道理，实则偷换了概念？",
+      "Nuance",
+      "It sounds reasonable but actually shifts the meaning of a concept",
+      "It is simple and directly proves the point",
+      "It uses an accurate definition consistently",
+      "It repeats the same idea without change",
+      0
+    ],
+    [
+      "Translate 与其急于下结论，不如先核实信息来源。",
+      "Translation",
+      "Rather than rush to a conclusion, verify the source of the information first.",
+      "Draw a conclusion before checking any source.",
+      "The source should be ignored after a conclusion.",
+      "Information is always reliable if repeated.",
+      0
+    ],
+    [
+      "What does 话中有话 (huà zhōng yǒu huà) suggest?",
+      "Idioms",
+      "There is an implied or hidden meaning behind the words",
+      "Someone speaks in a foreign language",
+      "A statement is unusually long",
+      "A speaker has forgotten the topic",
+      0
+    ],
+    [
+      "Translate 这并非要否定已有成果，而是提醒我们看到其中的局限。",
+      "Translation",
+      "This is not meant to deny existing achievements, but to remind us to see their limitations.",
+      "Existing achievements should all be dismissed.",
+      "There are no limitations worth mentioning.",
+      "The reminder proves the achievements are false.",
+      0
+    ],
+    [
+      "What does 不可同日而语 (bù kě tóng rì ér yǔ) mean?",
+      "Idioms",
+      "Cannot be compared on the same level",
+      "Can be compared exactly and equally",
+      "Must be discussed on the same day",
+      "Cannot be mentioned in public",
+      0
+    ],
+    [
+      "Translate 看似矛盾的两种说法，或许只是适用条件不同。",
+      "Translation",
+      "The two seemingly contradictory statements may simply apply under different conditions.",
+      "Both statements are definitely false.",
+      "The two statements mean exactly the same thing.",
+      "Contradictions can never depend on conditions.",
+      0
+    ],
+    [
+      "What does 归因于 (guīyīn yú) mean?",
+      "Vocabulary",
+      "To attribute something to / ascribe to",
+      "To object to",
+      "To make up for",
+      "To be unrelated to",
+      0
+    ],
+    [
+      "Translate 与其把分歧视为障碍，不如把它当作重新审视假设的机会。",
+      "Translation",
+      "Rather than view disagreement as an obstacle, treat it as a chance to re-examine assumptions.",
+      "Disagreement should prevent all review of assumptions.",
+      "Assumptions should never be questioned.",
+      "An obstacle is always a useful conclusion.",
+      0
+    ],
+    [
+      "What does 言外之意 (yán wài zhī yì) mean?",
+      "Idioms",
+      "The implication beyond the literal words",
+      "The dictionary definition only",
+      "A word’s pronunciation",
+      "A written character’s stroke order",
+      0
+    ],
+    [
+      "Translate 即便结论暂时无法确定，也应清楚区分事实、推测与价值判断。",
+      "Translation",
+      "Even if a conclusion cannot yet be settled, facts, speculation, and value judgments should be clearly distinguished.",
+      "Uncertain conclusions mean facts and guesses are identical.",
+      "Only value judgments need to be distinguished.",
+      "A conclusion must be certain before any distinctions can be made.",
+      0
+    ],
+    [
+      "What does 持之以恒 (chí zhī yǐ héng) mean?",
+      "Idioms",
+      "To persevere consistently",
+      "To change direction frequently",
+      "To decide without evidence",
+      "To finish something in a hurry",
+      0
+    ]
+  ]
+];
+const examBanksFinal = [
+  [
+    {
+      "id": "E1-1",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我叫林娜。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "My name is Lina.",
+        "She comes from Beijing.",
+        "The teacher is in the classroom now.",
+        "My Chinese name is easy to remember."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “My name is Lina.”"
+    },
+    {
+      "id": "E1-2",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “他是我的哥哥。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "How are you today?",
+        "They are all university students.",
+        "Her younger brother is ten years old this year.",
+        "He is my older brother."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “He is my older brother.”"
+    },
+    {
+      "id": "E1-3",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我们是新同学。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "There are four people in my family.",
+        "We will meet for the first time tomorrow.",
+        "We are new classmates.",
+        "I am very happy to meet you."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “We are new classmates.”"
+    },
+    {
+      "id": "E1-4",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “她来自北京。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Welcome to our school.",
+        "She comes from Beijing.",
+        "This is my friend.",
+        "Please say your name one more time."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “She comes from Beijing.”"
+    },
+    {
+      "id": "E1-5",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “你今天好吗？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "How are you today?",
+        "The teacher is in the classroom now.",
+        "My Chinese name is easy to remember.",
+        "My name is Lina."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “How are you today?”"
+    },
+    {
+      "id": "E1-6",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我很高兴认识你。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "They are all university students.",
+        "Her younger brother is ten years old this year.",
+        "He is my older brother.",
+        "I am very happy to meet you."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “I am very happy to meet you.”"
+    },
+    {
+      "id": "E1-7",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “这是我的朋友。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We will meet for the first time tomorrow.",
+        "We are new classmates.",
+        "This is my friend.",
+        "There are four people in my family."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “This is my friend.”"
+    },
+    {
+      "id": "E1-8",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “老师现在在教室里。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She comes from Beijing.",
+        "The teacher is in the classroom now.",
+        "Please say your name one more time.",
+        "Welcome to our school."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The teacher is in the classroom now.”"
+    },
+    {
+      "id": "E1-9",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “他们都是大学生。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "They are all university students.",
+        "My Chinese name is easy to remember.",
+        "My name is Lina.",
+        "How are you today?"
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “They are all university students.”"
+    },
+    {
+      "id": "E1-10",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我家有四口人。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Her younger brother is ten years old this year.",
+        "He is my older brother.",
+        "I am very happy to meet you.",
+        "There are four people in my family."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “There are four people in my family.”"
+    },
+    {
+      "id": "E1-11",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “请再说一遍你的名字。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We are new classmates.",
+        "This is my friend.",
+        "Please say your name one more time.",
+        "We will meet for the first time tomorrow."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Please say your name one more time.”"
+    },
+    {
+      "id": "E1-12",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我的中文名字很好记。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The teacher is in the classroom now.",
+        "My Chinese name is easy to remember.",
+        "Welcome to our school.",
+        "She comes from Beijing."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “My Chinese name is easy to remember.”"
+    },
+    {
+      "id": "E1-13",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “她的弟弟今年十岁。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Her younger brother is ten years old this year.",
+        "My name is Lina.",
+        "How are you today?",
+        "They are all university students."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Her younger brother is ten years old this year.”"
+    },
+    {
+      "id": "E1-14",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “我们明天第一次见面。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He is my older brother.",
+        "I am very happy to meet you.",
+        "There are four people in my family.",
+        "We will meet for the first time tomorrow."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We will meet for the first time tomorrow.”"
+    },
+    {
+      "id": "E1-15",
+      "topic": "Greetings & introductions",
+      "q": "Read the Chinese sentence “欢迎你来我们学校。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This is my friend.",
+        "Please say your name one more time.",
+        "Welcome to our school.",
+        "We are new classmates."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Welcome to our school.”"
+    }
+  ],
+  [
+    {
+      "id": "E2-1",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我每天早上七点起床。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please open the window a little.",
+        "I get up at seven every morning.",
+        "I take a shower before reading in the evening.",
+        "I listen to music before going to sleep."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I get up at seven every morning.”"
+    },
+    {
+      "id": "E2-2",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “爸爸通常在家做早饭。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Dad usually makes breakfast at home.",
+        "My younger brother practices writing Chinese characters every day.",
+        "She forgot to bring an umbrella today.",
+        "I have already finished writing my homework."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Dad usually makes breakfast at home.”"
+    },
+    {
+      "id": "E2-3",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “她坐公共汽车去上班。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We often go for a walk in the park on Sundays.",
+        "I am tidying my room.",
+        "He calls his mother as soon as he gets home.",
+        "She takes the bus to work."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “She takes the bus to work.”"
+    },
+    {
+      "id": "E2-4",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我晚上先洗澡再看书。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "They play basketball twice a week.",
+        "We usually eat dinner at eight in the evening.",
+        "I take a shower before reading in the evening.",
+        "He goes to the library as soon as he finishes lunch."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I take a shower before reading in the evening.”"
+    },
+    {
+      "id": "E2-5",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “弟弟每天练习写汉字。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I get up at seven every morning.",
+        "My younger brother practices writing Chinese characters every day.",
+        "I listen to music before going to sleep.",
+        "Please open the window a little."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “My younger brother practices writing Chinese characters every day.”"
+    },
+    {
+      "id": "E2-6",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我们星期天常常去公园散步。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We often go for a walk in the park on Sundays.",
+        "She forgot to bring an umbrella today.",
+        "I have already finished writing my homework.",
+        "Dad usually makes breakfast at home."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “We often go for a walk in the park on Sundays.”"
+    },
+    {
+      "id": "E2-7",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “他吃完午饭就去图书馆。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I am tidying my room.",
+        "He calls his mother as soon as he gets home.",
+        "She takes the bus to work.",
+        "He goes to the library as soon as he finishes lunch."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “He goes to the library as soon as he finishes lunch.”"
+    },
+    {
+      "id": "E2-8",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我睡觉以前会听音乐。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We usually eat dinner at eight in the evening.",
+        "I take a shower before reading in the evening.",
+        "I listen to music before going to sleep.",
+        "They play basketball twice a week."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I listen to music before going to sleep.”"
+    },
+    {
+      "id": "E2-9",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “她今天忘了带雨伞。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "My younger brother practices writing Chinese characters every day.",
+        "She forgot to bring an umbrella today.",
+        "Please open the window a little.",
+        "I get up at seven every morning."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “She forgot to bring an umbrella today.”"
+    },
+    {
+      "id": "E2-10",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我正在整理自己的房间。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I am tidying my room.",
+        "I have already finished writing my homework.",
+        "Dad usually makes breakfast at home.",
+        "We often go for a walk in the park on Sundays."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “I am tidying my room.”"
+    },
+    {
+      "id": "E2-11",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “他们每周打两次篮球。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He calls his mother as soon as he gets home.",
+        "She takes the bus to work.",
+        "He goes to the library as soon as he finishes lunch.",
+        "They play basketball twice a week."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “They play basketball twice a week.”"
+    },
+    {
+      "id": "E2-12",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “请把窗户打开一点儿。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I take a shower before reading in the evening.",
+        "I listen to music before going to sleep.",
+        "Please open the window a little.",
+        "We usually eat dinner at eight in the evening."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Please open the window a little.”"
+    },
+    {
+      "id": "E2-13",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我已经把作业写完了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She forgot to bring an umbrella today.",
+        "I have already finished writing my homework.",
+        "I get up at seven every morning.",
+        "My younger brother practices writing Chinese characters every day."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I have already finished writing my homework.”"
+    },
+    {
+      "id": "E2-14",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “他一到家就给妈妈打电话。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He calls his mother as soon as he gets home.",
+        "Dad usually makes breakfast at home.",
+        "We often go for a walk in the park on Sundays.",
+        "I am tidying my room."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “He calls his mother as soon as he gets home.”"
+    },
+    {
+      "id": "E2-15",
+      "topic": "Daily routines",
+      "q": "Read the Chinese sentence “我们通常在晚上八点吃晚饭。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She takes the bus to work.",
+        "He goes to the library as soon as he finishes lunch.",
+        "They play basketball twice a week.",
+        "We usually eat dinner at eight in the evening."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We usually eat dinner at eight in the evening.”"
+    }
+  ],
+  [
+    {
+      "id": "E3-1",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “这道题比上一道难。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I spent two hours preparing the speech.",
+        "We need more time to complete the experiment.",
+        "This question is harder than the previous one.",
+        "She answered this question in Chinese."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “This question is harder than the previous one.”"
+    },
+    {
+      "id": "E3-2",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “老师让我们明天交报告。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "His explanation made this concept easier for me to understand.",
+        "The teacher asked us to hand in the report tomorrow.",
+        "If you do not understand, you can ask me at any time.",
+        "The main point of this article is very clear."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The teacher asked us to hand in the report tomorrow.”"
+    },
+    {
+      "id": "E3-3",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “我借了一本关于历史的书。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I borrowed a book about history.",
+        "After the exam ended, everyone breathed a sigh of relief.",
+        "Please compare the meanings of these two sentences.",
+        "As long as you practice every day, you will improve."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “I borrowed a book about history.”"
+    },
+    {
+      "id": "E3-4",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “她用中文回答了这个问题。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He can not only speak Chinese but also write Chinese characters.",
+        "Although she was busy, she still came to help us.",
+        "This discussion helped me discover my own mistakes.",
+        "She answered this question in Chinese."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “She answered this question in Chinese.”"
+    },
+    {
+      "id": "E3-5",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “如果你不懂，可以随时问我。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We need more time to complete the experiment.",
+        "This question is harder than the previous one.",
+        "If you do not understand, you can ask me at any time.",
+        "I spent two hours preparing the speech."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “If you do not understand, you can ask me at any time.”"
+    },
+    {
+      "id": "E3-6",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “考试结束以后，大家都松了一口气。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The teacher asked us to hand in the report tomorrow.",
+        "After the exam ended, everyone breathed a sigh of relief.",
+        "The main point of this article is very clear.",
+        "His explanation made this concept easier for me to understand."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “After the exam ended, everyone breathed a sigh of relief.”"
+    },
+    {
+      "id": "E3-7",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “他不仅会说中文，而且会写汉字。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He can not only speak Chinese but also write Chinese characters.",
+        "Please compare the meanings of these two sentences.",
+        "As long as you practice every day, you will improve.",
+        "I borrowed a book about history."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “He can not only speak Chinese but also write Chinese characters.”"
+    },
+    {
+      "id": "E3-8",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “我花了两个小时准备演讲。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Although she was busy, she still came to help us.",
+        "This discussion helped me discover my own mistakes.",
+        "She answered this question in Chinese.",
+        "I spent two hours preparing the speech."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “I spent two hours preparing the speech.”"
+    },
+    {
+      "id": "E3-9",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “这篇文章的重点很清楚。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This question is harder than the previous one.",
+        "If you do not understand, you can ask me at any time.",
+        "The main point of this article is very clear.",
+        "We need more time to complete the experiment."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “The main point of this article is very clear.”"
+    },
+    {
+      "id": "E3-10",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “请比较这两个句子的意思。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "After the exam ended, everyone breathed a sigh of relief.",
+        "Please compare the meanings of these two sentences.",
+        "His explanation made this concept easier for me to understand.",
+        "The teacher asked us to hand in the report tomorrow."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “Please compare the meanings of these two sentences.”"
+    },
+    {
+      "id": "E3-11",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “她虽然很忙，还是来帮助我们。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Although she was busy, she still came to help us.",
+        "As long as you practice every day, you will improve.",
+        "I borrowed a book about history.",
+        "He can not only speak Chinese but also write Chinese characters."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Although she was busy, she still came to help us.”"
+    },
+    {
+      "id": "E3-12",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “我们需要更多时间来完成实验。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This discussion helped me discover my own mistakes.",
+        "She answered this question in Chinese.",
+        "I spent two hours preparing the speech.",
+        "We need more time to complete the experiment."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We need more time to complete the experiment.”"
+    },
+    {
+      "id": "E3-13",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “他的解释让我更容易理解这个概念。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If you do not understand, you can ask me at any time.",
+        "The main point of this article is very clear.",
+        "His explanation made this concept easier for me to understand.",
+        "This question is harder than the previous one."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “His explanation made this concept easier for me to understand.”"
+    },
+    {
+      "id": "E3-14",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “只要每天练习，你就会进步。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please compare the meanings of these two sentences.",
+        "As long as you practice every day, you will improve.",
+        "The teacher asked us to hand in the report tomorrow.",
+        "After the exam ended, everyone breathed a sigh of relief."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “As long as you practice every day, you will improve.”"
+    },
+    {
+      "id": "E3-15",
+      "topic": "School & learning",
+      "q": "Read the Chinese sentence “这次讨论帮助我发现了自己的错误。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This discussion helped me discover my own mistakes.",
+        "I borrowed a book about history.",
+        "He can not only speak Chinese but also write Chinese characters.",
+        "Although she was busy, she still came to help us."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This discussion helped me discover my own mistakes.”"
+    }
+  ],
+  [
+    {
+      "id": "E4-1",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “你为什么这么早出门？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Shall we have a cup of coffee together?",
+        "I want to know why the meeting was postponed.",
+        "We had better arrive ten minutes early.",
+        "Why are you leaving so early?"
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Why are you leaving so early?”"
+    },
+    {
+      "id": "E4-2",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “最近的地铁站在哪里？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Have you decided where to go during summer vacation?",
+        "I am free every day except Friday.",
+        "Where is the nearest subway station?",
+        "If it rains tomorrow, we will meet at home instead."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Where is the nearest subway station?”"
+    },
+    {
+      "id": "E4-3",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “你能告诉我现在几点吗？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Which task do you think we should do first?",
+        "Can you tell me what time it is now?",
+        "When do you plan to start preparing?",
+        "May I ask what time this train arrives in Shanghai?"
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “Can you tell me what time it is now?”"
+    },
+    {
+      "id": "E4-4",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “我们要不要一起喝杯咖啡？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Shall we have a cup of coffee together?",
+        "Is there a slightly cheaper hotel nearby?",
+        "No matter how late it is, please send me a message.",
+        "I will go with you as long as time allows."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Shall we have a cup of coffee together?”"
+    },
+    {
+      "id": "E4-5",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “如果明天下雨，我们就改在家里见。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I want to know why the meeting was postponed.",
+        "We had better arrive ten minutes early.",
+        "Why are you leaving so early?",
+        "If it rains tomorrow, we will meet at home instead."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “If it rains tomorrow, we will meet at home instead.”"
+    },
+    {
+      "id": "E4-6",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “你打算什么时候开始准备？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I am free every day except Friday.",
+        "Where is the nearest subway station?",
+        "When do you plan to start preparing?",
+        "Have you decided where to go during summer vacation?"
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “When do you plan to start preparing?”"
+    },
+    {
+      "id": "E4-7",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “这附近有没有便宜一点的旅馆？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Can you tell me what time it is now?",
+        "Is there a slightly cheaper hotel nearby?",
+        "May I ask what time this train arrives in Shanghai?",
+        "Which task do you think we should do first?"
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “Is there a slightly cheaper hotel nearby?”"
+    },
+    {
+      "id": "E4-8",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “我想知道会议为什么推迟了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I want to know why the meeting was postponed.",
+        "No matter how late it is, please send me a message.",
+        "I will go with you as long as time allows.",
+        "Shall we have a cup of coffee together?"
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “I want to know why the meeting was postponed.”"
+    },
+    {
+      "id": "E4-9",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “你已经决定暑假去哪儿了吗？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We had better arrive ten minutes early.",
+        "Why are you leaving so early?",
+        "If it rains tomorrow, we will meet at home instead.",
+        "Have you decided where to go during summer vacation?"
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Have you decided where to go during summer vacation?”"
+    },
+    {
+      "id": "E4-10",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “请问这班火车几点到上海？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Where is the nearest subway station?",
+        "When do you plan to start preparing?",
+        "May I ask what time this train arrives in Shanghai?",
+        "I am free every day except Friday."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “May I ask what time this train arrives in Shanghai?”"
+    },
+    {
+      "id": "E4-11",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “不管多晚，请给我发个消息。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Is there a slightly cheaper hotel nearby?",
+        "No matter how late it is, please send me a message.",
+        "Which task do you think we should do first?",
+        "Can you tell me what time it is now?"
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “No matter how late it is, please send me a message.”"
+    },
+    {
+      "id": "E4-12",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “我们最好提前十分钟到。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We had better arrive ten minutes early.",
+        "I will go with you as long as time allows.",
+        "Shall we have a cup of coffee together?",
+        "I want to know why the meeting was postponed."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “We had better arrive ten minutes early.”"
+    },
+    {
+      "id": "E4-13",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “除了周五以外，我每天都有空。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Why are you leaving so early?",
+        "If it rains tomorrow, we will meet at home instead.",
+        "Have you decided where to go during summer vacation?",
+        "I am free every day except Friday."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “I am free every day except Friday.”"
+    },
+    {
+      "id": "E4-14",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “你觉得我们应该先做哪一件事？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "When do you plan to start preparing?",
+        "May I ask what time this train arrives in Shanghai?",
+        "Which task do you think we should do first?",
+        "Where is the nearest subway station?"
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Which task do you think we should do first?”"
+    },
+    {
+      "id": "E4-15",
+      "topic": "Questions & plans",
+      "q": "Read the Chinese sentence “只要时间允许，我就陪你去。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "No matter how late it is, please send me a message.",
+        "I will go with you as long as time allows.",
+        "Can you tell me what time it is now?",
+        "Is there a slightly cheaper hotel nearby?"
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I will go with you as long as time allows.”"
+    }
+  ],
+  [
+    {
+      "id": "E5-1",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “这家餐厅的面条很好吃。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The noodles at this restaurant are delicious.",
+        "I would like to look at the menu before ordering.",
+        "These shoes feel very comfortable to wear.",
+        "This dish smells delicious and tastes good too."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “The noodles at this restaurant are delicious.”"
+    },
+    {
+      "id": "E5-2",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “请给我一杯不加糖的茶。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This apple looks very fresh.",
+        "If I buy two, can I get ten percent off?",
+        "I forgot my wallet; can I pay with my phone?",
+        "Please give me a cup of tea without sugar."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Please give me a cup of tea without sugar.”"
+    },
+    {
+      "id": "E5-3",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “这件衬衫比那件便宜二十块钱。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The fruit at the market is cheaper than the fruit at the supermarket.",
+        "Please do not add too much chili.",
+        "This shirt is twenty yuan cheaper than that one.",
+        "The waiter brought the bill over."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “This shirt is twenty yuan cheaper than that one.”"
+    },
+    {
+      "id": "E5-4",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “我想先看看菜单再点菜。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We bought enough things for tomorrow's picnic.",
+        "I would like to look at the menu before ordering.",
+        "I am allergic to peanuts, so I cannot eat this dish.",
+        "She put the leftover food in the refrigerator."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I would like to look at the menu before ordering.”"
+    },
+    {
+      "id": "E5-5",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “这个苹果看起来很新鲜。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This apple looks very fresh.",
+        "These shoes feel very comfortable to wear.",
+        "This dish smells delicious and tastes good too.",
+        "The noodles at this restaurant are delicious."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This apple looks very fresh.”"
+    },
+    {
+      "id": "E5-6",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “服务员把账单拿过来了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If I buy two, can I get ten percent off?",
+        "I forgot my wallet; can I pay with my phone?",
+        "Please give me a cup of tea without sugar.",
+        "The waiter brought the bill over."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “The waiter brought the bill over.”"
+    },
+    {
+      "id": "E5-7",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “我对花生过敏，所以不能吃这道菜。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please do not add too much chili.",
+        "This shirt is twenty yuan cheaper than that one.",
+        "I am allergic to peanuts, so I cannot eat this dish.",
+        "The fruit at the market is cheaper than the fruit at the supermarket."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I am allergic to peanuts, so I cannot eat this dish.”"
+    },
+    {
+      "id": "E5-8",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “这双鞋穿起来很舒服。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I would like to look at the menu before ordering.",
+        "These shoes feel very comfortable to wear.",
+        "She put the leftover food in the refrigerator.",
+        "We bought enough things for tomorrow's picnic."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “These shoes feel very comfortable to wear.”"
+    },
+    {
+      "id": "E5-9",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “如果买两件，可以打九折吗？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If I buy two, can I get ten percent off?",
+        "This dish smells delicious and tastes good too.",
+        "The noodles at this restaurant are delicious.",
+        "This apple looks very fresh."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “If I buy two, can I get ten percent off?”"
+    },
+    {
+      "id": "E5-10",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “市场里的水果比超市里的便宜。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I forgot my wallet; can I pay with my phone?",
+        "Please give me a cup of tea without sugar.",
+        "The waiter brought the bill over.",
+        "The fruit at the market is cheaper than the fruit at the supermarket."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “The fruit at the market is cheaper than the fruit at the supermarket.”"
+    },
+    {
+      "id": "E5-11",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “她把剩下的饭菜放进冰箱。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This shirt is twenty yuan cheaper than that one.",
+        "I am allergic to peanuts, so I cannot eat this dish.",
+        "She put the leftover food in the refrigerator.",
+        "Please do not add too much chili."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “She put the leftover food in the refrigerator.”"
+    },
+    {
+      "id": "E5-12",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “这道菜闻起来香，吃起来也不错。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "These shoes feel very comfortable to wear.",
+        "This dish smells delicious and tastes good too.",
+        "We bought enough things for tomorrow's picnic.",
+        "I would like to look at the menu before ordering."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “This dish smells delicious and tastes good too.”"
+    },
+    {
+      "id": "E5-13",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “我忘记带钱包了，可以用手机付款吗？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I forgot my wallet; can I pay with my phone?",
+        "The noodles at this restaurant are delicious.",
+        "This apple looks very fresh.",
+        "If I buy two, can I get ten percent off?"
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “I forgot my wallet; can I pay with my phone?”"
+    },
+    {
+      "id": "E5-14",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “请不要放太多辣椒。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please give me a cup of tea without sugar.",
+        "The waiter brought the bill over.",
+        "The fruit at the market is cheaper than the fruit at the supermarket.",
+        "Please do not add too much chili."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Please do not add too much chili.”"
+    },
+    {
+      "id": "E5-15",
+      "topic": "Food & shopping",
+      "q": "Read the Chinese sentence “我们买够了明天野餐需要的东西。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I am allergic to peanuts, so I cannot eat this dish.",
+        "She put the leftover food in the refrigerator.",
+        "We bought enough things for tomorrow's picnic.",
+        "This shirt is twenty yuan cheaper than that one."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “We bought enough things for tomorrow's picnic.”"
+    }
+  ],
+  [
+    {
+      "id": "E6-1",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “从这里到机场需要多长时间？” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I would rather take the train than drive at night.",
+        "How long does it take to get from here to the airport?",
+        "Go straight along this road and then turn left.",
+        "Although the journey was long, the scenery was beautiful."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “How long does it take to get from here to the airport?”"
+    },
+    {
+      "id": "E6-2",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “请在下一站提醒我下车。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please remind me to get off at the next stop.",
+        "I put my passport in the hotel safe.",
+        "The room we booked faces the sea.",
+        "The bridge marked on the map has been closed."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Please remind me to get off at the next stop.”"
+    },
+    {
+      "id": "E6-3",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “我们因为大雾错过了航班。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The train is much faster than the bus.",
+        "Because of road construction, the driver took a different route.",
+        "We arrived early, so we had time to buy some water.",
+        "We missed the flight because of the heavy fog."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We missed the flight because of the heavy fog.”"
+    },
+    {
+      "id": "E6-4",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “这条路一直走，然后向左转。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please make sure all the luggage has been loaded onto the vehicle.",
+        "Wherever you go, keep your documents safe.",
+        "Go straight along this road and then turn left.",
+        "After arriving, please call the tour guide first."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Go straight along this road and then turn left.”"
+    },
+    {
+      "id": "E6-5",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “我把护照放在酒店的保险箱里了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "How long does it take to get from here to the airport?",
+        "I put my passport in the hotel safe.",
+        "Although the journey was long, the scenery was beautiful.",
+        "I would rather take the train than drive at night."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I put my passport in the hotel safe.”"
+    },
+    {
+      "id": "E6-6",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “火车比公共汽车快得多。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The train is much faster than the bus.",
+        "The room we booked faces the sea.",
+        "The bridge marked on the map has been closed.",
+        "Please remind me to get off at the next stop."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “The train is much faster than the bus.”"
+    },
+    {
+      "id": "E6-7",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “到达以后，请先给导游打电话。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Because of road construction, the driver took a different route.",
+        "We arrived early, so we had time to buy some water.",
+        "We missed the flight because of the heavy fog.",
+        "After arriving, please call the tour guide first."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “After arriving, please call the tour guide first.”"
+    },
+    {
+      "id": "E6-8",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “虽然旅途很长，但是风景很美。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Wherever you go, keep your documents safe.",
+        "Go straight along this road and then turn left.",
+        "Although the journey was long, the scenery was beautiful.",
+        "Please make sure all the luggage has been loaded onto the vehicle."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Although the journey was long, the scenery was beautiful.”"
+    },
+    {
+      "id": "E6-9",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “我们预订的房间面向大海。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I put my passport in the hotel safe.",
+        "The room we booked faces the sea.",
+        "I would rather take the train than drive at night.",
+        "How long does it take to get from here to the airport?"
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The room we booked faces the sea.”"
+    },
+    {
+      "id": "E6-10",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “由于道路施工，司机换了一条路线。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Because of road construction, the driver took a different route.",
+        "The bridge marked on the map has been closed.",
+        "Please remind me to get off at the next stop.",
+        "The train is much faster than the bus."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Because of road construction, the driver took a different route.”"
+    },
+    {
+      "id": "E6-11",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “请确认行李已经全部装上车。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We arrived early, so we had time to buy some water.",
+        "We missed the flight because of the heavy fog.",
+        "After arriving, please call the tour guide first.",
+        "Please make sure all the luggage has been loaded onto the vehicle."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Please make sure all the luggage has been loaded onto the vehicle.”"
+    },
+    {
+      "id": "E6-12",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “我宁愿坐火车，也不愿意开夜车。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Go straight along this road and then turn left.",
+        "Although the journey was long, the scenery was beautiful.",
+        "I would rather take the train than drive at night.",
+        "Wherever you go, keep your documents safe."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I would rather take the train than drive at night.”"
+    },
+    {
+      "id": "E6-13",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “地图上标出的桥已经关闭了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The room we booked faces the sea.",
+        "The bridge marked on the map has been closed.",
+        "How long does it take to get from here to the airport?",
+        "I put my passport in the hotel safe."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The bridge marked on the map has been closed.”"
+    },
+    {
+      "id": "E6-14",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “我们提前到达，所以有时间买点水。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We arrived early, so we had time to buy some water.",
+        "Please remind me to get off at the next stop.",
+        "The train is much faster than the bus.",
+        "Because of road construction, the driver took a different route."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “We arrived early, so we had time to buy some water.”"
+    },
+    {
+      "id": "E6-15",
+      "topic": "Travel & directions",
+      "q": "Read the Chinese sentence “无论你去哪里，都要保管好证件。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We missed the flight because of the heavy fog.",
+        "After arriving, please call the tour guide first.",
+        "Please make sure all the luggage has been loaded onto the vehicle.",
+        "Wherever you go, keep your documents safe."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Wherever you go, keep your documents safe.”"
+    }
+  ],
+  [
+    {
+      "id": "E7-1",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “我会在下班以前回复你的邮件。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Rather than discussing it repeatedly, we should test this plan first.",
+        "Please check the figures carefully before submitting them.",
+        "I will reply to your email before I leave work.",
+        "The video meeting was temporarily interrupted because of a network failure."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I will reply to your email before I leave work.”"
+    },
+    {
+      "id": "E7-2",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “经理要求每个人提出一个建议。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He did not refuse directly; instead, he proposed an alternative.",
+        "The manager asked everyone to offer one suggestion.",
+        "Please organize the main points into a one-page summary.",
+        "She is responsible for coordinating the work of different departments."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The manager asked everyone to offer one suggestion.”"
+    },
+    {
+      "id": "E7-3",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “这份合同需要双方签字。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Both parties need to sign this contract.",
+        "He is good at resolving disagreements within the team.",
+        "If the data is accurate, the conclusion will be more convincing.",
+        "To avoid misunderstandings, we made the requirements more specific."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Both parties need to sign this contract.”"
+    },
+    {
+      "id": "E7-4",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “由于网络故障，视频会议暂时中断了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I have already sent the latest version to the client.",
+        "The purpose of the meeting is to identify the root cause of the problem.",
+        "This decision will affect the plans for the next few months.",
+        "The video meeting was temporarily interrupted because of a network failure."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “The video meeting was temporarily interrupted because of a network failure.”"
+    },
+    {
+      "id": "E7-5",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “请把重点整理成一页摘要。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please check the figures carefully before submitting them.",
+        "I will reply to your email before I leave work.",
+        "Please organize the main points into a one-page summary.",
+        "Rather than discussing it repeatedly, we should test this plan first."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Please organize the main points into a one-page summary.”"
+    },
+    {
+      "id": "E7-6",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “他擅长解决团队之间的分歧。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The manager asked everyone to offer one suggestion.",
+        "He is good at resolving disagreements within the team.",
+        "She is responsible for coordinating the work of different departments.",
+        "He did not refuse directly; instead, he proposed an alternative."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “He is good at resolving disagreements within the team.”"
+    },
+    {
+      "id": "E7-7",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “我已经把最新版本发给客户了。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I have already sent the latest version to the client.",
+        "If the data is accurate, the conclusion will be more convincing.",
+        "To avoid misunderstandings, we made the requirements more specific.",
+        "Both parties need to sign this contract."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “I have already sent the latest version to the client.”"
+    },
+    {
+      "id": "E7-8",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “与其重复讨论，不如先测试这个方案。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The purpose of the meeting is to identify the root cause of the problem.",
+        "This decision will affect the plans for the next few months.",
+        "The video meeting was temporarily interrupted because of a network failure.",
+        "Rather than discussing it repeatedly, we should test this plan first."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Rather than discussing it repeatedly, we should test this plan first.”"
+    },
+    {
+      "id": "E7-9",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “她负责协调不同部门的工作。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I will reply to your email before I leave work.",
+        "Please organize the main points into a one-page summary.",
+        "She is responsible for coordinating the work of different departments.",
+        "Please check the figures carefully before submitting them."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “She is responsible for coordinating the work of different departments.”"
+    },
+    {
+      "id": "E7-10",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “如果数据准确，结论就更有说服力。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He is good at resolving disagreements within the team.",
+        "If the data is accurate, the conclusion will be more convincing.",
+        "He did not refuse directly; instead, he proposed an alternative.",
+        "The manager asked everyone to offer one suggestion."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “If the data is accurate, the conclusion will be more convincing.”"
+    },
+    {
+      "id": "E7-11",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “会议的目的在于找出问题的根源。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The purpose of the meeting is to identify the root cause of the problem.",
+        "To avoid misunderstandings, we made the requirements more specific.",
+        "Both parties need to sign this contract.",
+        "I have already sent the latest version to the client."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “The purpose of the meeting is to identify the root cause of the problem.”"
+    },
+    {
+      "id": "E7-12",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “请在提交之前仔细检查数字。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This decision will affect the plans for the next few months.",
+        "The video meeting was temporarily interrupted because of a network failure.",
+        "Rather than discussing it repeatedly, we should test this plan first.",
+        "Please check the figures carefully before submitting them."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Please check the figures carefully before submitting them.”"
+    },
+    {
+      "id": "E7-13",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “他没有直接拒绝，而是提出了替代方案。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Please organize the main points into a one-page summary.",
+        "She is responsible for coordinating the work of different departments.",
+        "He did not refuse directly; instead, he proposed an alternative.",
+        "I will reply to your email before I leave work."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “He did not refuse directly; instead, he proposed an alternative.”"
+    },
+    {
+      "id": "E7-14",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “为了避免误会，我们把要求写得更具体。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If the data is accurate, the conclusion will be more convincing.",
+        "To avoid misunderstandings, we made the requirements more specific.",
+        "The manager asked everyone to offer one suggestion.",
+        "He is good at resolving disagreements within the team."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “To avoid misunderstandings, we made the requirements more specific.”"
+    },
+    {
+      "id": "E7-15",
+      "topic": "Work & communication",
+      "q": "Read the Chinese sentence “这项决定会影响接下来几个月的安排。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This decision will affect the plans for the next few months.",
+        "Both parties need to sign this contract.",
+        "I have already sent the latest version to the client.",
+        "The purpose of the meeting is to identify the root cause of the problem."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This decision will affect the plans for the next few months.”"
+    }
+  ],
+  [
+    {
+      "id": "E8-1",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “听到这个消息以后，她既惊讶又高兴。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This movie made me rethink the meaning of success.",
+        "The more I learn about the situation, the more I feel we should remain patient.",
+        "This matter reminds me not to jump to conclusions.",
+        "After hearing the news, she was both surprised and happy."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “After hearing the news, she was both surprised and happy.”"
+    },
+    {
+      "id": "E8-2",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “我理解你的担心，但我们还需要证据。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "His answer sounds reasonable, but in fact it lacks support.",
+        "I would rather admit a mistake than conceal the facts.",
+        "I understand your concern, but we still need evidence.",
+        "Rather than blaming others, check yourself first."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I understand your concern, but we still need evidence.”"
+    },
+    {
+      "id": "E8-3",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “他表面上很平静，心里却十分紧张。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "His reaction to the criticism was calmer than I expected.",
+        "He seemed calm on the surface, but he was very nervous inside.",
+        "I do not oppose this idea; I just think it is not complete enough.",
+        "Even if the result is not ideal, we can learn from it."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “He seemed calm on the surface, but he was very nervous inside.”"
+    },
+    {
+      "id": "E8-4",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “这部电影让我重新思考了成功的意义。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This movie made me rethink the meaning of success.",
+        "She speaks very directly, yet she does not hurt anyone.",
+        "She values both efficiency and her colleagues' feelings.",
+        "Genuine trust takes time to build."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This movie made me rethink the meaning of success.”"
+    },
+    {
+      "id": "E8-5",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “与其责怪别人，不如先检查自己。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The more I learn about the situation, the more I feel we should remain patient.",
+        "This matter reminds me not to jump to conclusions.",
+        "After hearing the news, she was both surprised and happy.",
+        "Rather than blaming others, check yourself first."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Rather than blaming others, check yourself first.”"
+    },
+    {
+      "id": "E8-6",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “我并不反对这个想法，只是觉得还不够完整。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I would rather admit a mistake than conceal the facts.",
+        "I understand your concern, but we still need evidence.",
+        "I do not oppose this idea; I just think it is not complete enough.",
+        "His answer sounds reasonable, but in fact it lacks support."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “I do not oppose this idea; I just think it is not complete enough.”"
+    },
+    {
+      "id": "E8-7",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “她说话很直接，却没有伤害任何人。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He seemed calm on the surface, but he was very nervous inside.",
+        "She speaks very directly, yet she does not hurt anyone.",
+        "Even if the result is not ideal, we can learn from it.",
+        "His reaction to the criticism was calmer than I expected."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “She speaks very directly, yet she does not hurt anyone.”"
+    },
+    {
+      "id": "E8-8",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “越了解情况，我越觉得应该保持耐心。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The more I learn about the situation, the more I feel we should remain patient.",
+        "She values both efficiency and her colleagues' feelings.",
+        "Genuine trust takes time to build.",
+        "This movie made me rethink the meaning of success."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “The more I learn about the situation, the more I feel we should remain patient.”"
+    },
+    {
+      "id": "E8-9",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “他的回答听起来合理，实际上却缺少依据。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This matter reminds me not to jump to conclusions.",
+        "After hearing the news, she was both surprised and happy.",
+        "Rather than blaming others, check yourself first.",
+        "His answer sounds reasonable, but in fact it lacks support."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “His answer sounds reasonable, but in fact it lacks support.”"
+    },
+    {
+      "id": "E8-10",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “即使结果不理想，我们也能从中吸取教训。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I understand your concern, but we still need evidence.",
+        "I do not oppose this idea; I just think it is not complete enough.",
+        "Even if the result is not ideal, we can learn from it.",
+        "I would rather admit a mistake than conceal the facts."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Even if the result is not ideal, we can learn from it.”"
+    },
+    {
+      "id": "E8-11",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “她既重视效率，也关心同事的感受。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She speaks very directly, yet she does not hurt anyone.",
+        "She values both efficiency and her colleagues' feelings.",
+        "His reaction to the criticism was calmer than I expected.",
+        "He seemed calm on the surface, but he was very nervous inside."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “She values both efficiency and her colleagues' feelings.”"
+    },
+    {
+      "id": "E8-12",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “这件事提醒我不要轻易下结论。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This matter reminds me not to jump to conclusions.",
+        "Genuine trust takes time to build.",
+        "This movie made me rethink the meaning of success.",
+        "The more I learn about the situation, the more I feel we should remain patient."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This matter reminds me not to jump to conclusions.”"
+    },
+    {
+      "id": "E8-13",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “我宁可承认错误，也不愿意隐瞒事实。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "After hearing the news, she was both surprised and happy.",
+        "Rather than blaming others, check yourself first.",
+        "His answer sounds reasonable, but in fact it lacks support.",
+        "I would rather admit a mistake than conceal the facts."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “I would rather admit a mistake than conceal the facts.”"
+    },
+    {
+      "id": "E8-14",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “他对批评的反应比我预想的平和。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I do not oppose this idea; I just think it is not complete enough.",
+        "Even if the result is not ideal, we can learn from it.",
+        "His reaction to the criticism was calmer than I expected.",
+        "I understand your concern, but we still need evidence."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “His reaction to the criticism was calmer than I expected.”"
+    },
+    {
+      "id": "E8-15",
+      "topic": "Feelings & opinions",
+      "q": "Read the Chinese sentence “真正的信任需要时间来建立。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She values both efficiency and her colleagues' feelings.",
+        "Genuine trust takes time to build.",
+        "He seemed calm on the surface, but he was very nervous inside.",
+        "She speaks very directly, yet she does not hurt anyone."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “Genuine trust takes time to build.”"
+    }
+  ],
+  [
+    {
+      "id": "E9-1",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “鉴于目前的情况，我们建议暂缓执行该计划。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Given the current situation, we recommend postponing the plan's implementation.",
+        "In the absence of sufficient evidence, a judgment should not be made.",
+        "The two sides have reached preliminary consensus on the main terms.",
+        "To ensure fairness, all applications will be reviewed using the same criteria."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Given the current situation, we recommend postponing the plan's implementation.”"
+    },
+    {
+      "id": "E9-2",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “本报告旨在评估新措施的实际效果。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Although the proposal has advantages, problems remain to be addressed.",
+        "The implementation details will be adjusted appropriately based on feedback.",
+        "This does not mean the original approach has no value.",
+        "This report aims to evaluate the practical effects of the new measures."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “This report aims to evaluate the practical effects of the new measures.”"
+    },
+    {
+      "id": "E9-3",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “相关部门将进一步核实所提供的信息。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We must distinguish correlation from causation.",
+        "Before making the final decision, the views of all parties should be fully heard.",
+        "The relevant departments will further verify the information provided.",
+        "Please have all representatives comment on the revisions."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “The relevant departments will further verify the information provided.”"
+    },
+    {
+      "id": "E9-4",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “在缺乏充分证据的情况下，不宜作出判断。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "In the long run, continuous improvement is more important than a one-time result.",
+        "In the absence of sufficient evidence, a judgment should not be made.",
+        "This study provides an important basis for subsequent work.",
+        "This conclusion still needs to be verified through independent research."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “In the absence of sufficient evidence, a judgment should not be made.”"
+    },
+    {
+      "id": "E9-5",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “该方案虽有优势，仍存在需要解决的问题。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Although the proposal has advantages, problems remain to be addressed.",
+        "The two sides have reached preliminary consensus on the main terms.",
+        "To ensure fairness, all applications will be reviewed using the same criteria.",
+        "Given the current situation, we recommend postponing the plan's implementation."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “Although the proposal has advantages, problems remain to be addressed.”"
+    },
+    {
+      "id": "E9-6",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “请各位代表就修订内容发表意见。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The implementation details will be adjusted appropriately based on feedback.",
+        "This does not mean the original approach has no value.",
+        "This report aims to evaluate the practical effects of the new measures.",
+        "Please have all representatives comment on the revisions."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Please have all representatives comment on the revisions.”"
+    },
+    {
+      "id": "E9-7",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “这项研究为后续工作提供了重要依据。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Before making the final decision, the views of all parties should be fully heard.",
+        "The relevant departments will further verify the information provided.",
+        "This study provides an important basis for subsequent work.",
+        "We must distinguish correlation from causation."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “This study provides an important basis for subsequent work.”"
+    },
+    {
+      "id": "E9-8",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “双方已就主要条款达成初步共识。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "In the absence of sufficient evidence, a judgment should not be made.",
+        "The two sides have reached preliminary consensus on the main terms.",
+        "This conclusion still needs to be verified through independent research.",
+        "In the long run, continuous improvement is more important than a one-time result."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “The two sides have reached preliminary consensus on the main terms.”"
+    },
+    {
+      "id": "E9-9",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “实施细节将根据反馈作适当调整。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The implementation details will be adjusted appropriately based on feedback.",
+        "To ensure fairness, all applications will be reviewed using the same criteria.",
+        "Given the current situation, we recommend postponing the plan's implementation.",
+        "Although the proposal has advantages, problems remain to be addressed."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “The implementation details will be adjusted appropriately based on feedback.”"
+    },
+    {
+      "id": "E9-10",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “我们必须区分相关性与因果关系。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This does not mean the original approach has no value.",
+        "This report aims to evaluate the practical effects of the new measures.",
+        "Please have all representatives comment on the revisions.",
+        "We must distinguish correlation from causation."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We must distinguish correlation from causation.”"
+    },
+    {
+      "id": "E9-11",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “该结论仍需通过独立研究加以验证。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The relevant departments will further verify the information provided.",
+        "This study provides an important basis for subsequent work.",
+        "This conclusion still needs to be verified through independent research.",
+        "Before making the final decision, the views of all parties should be fully heard."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “This conclusion still needs to be verified through independent research.”"
+    },
+    {
+      "id": "E9-12",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “为确保公平，所有申请都将按照同一标准审核。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "The two sides have reached preliminary consensus on the main terms.",
+        "To ensure fairness, all applications will be reviewed using the same criteria.",
+        "In the long run, continuous improvement is more important than a one-time result.",
+        "In the absence of sufficient evidence, a judgment should not be made."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “To ensure fairness, all applications will be reviewed using the same criteria.”"
+    },
+    {
+      "id": "E9-13",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “这并不意味着原有做法毫无价值。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This does not mean the original approach has no value.",
+        "Given the current situation, we recommend postponing the plan's implementation.",
+        "Although the proposal has advantages, problems remain to be addressed.",
+        "The implementation details will be adjusted appropriately based on feedback."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “This does not mean the original approach has no value.”"
+    },
+    {
+      "id": "E9-14",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “在作出最终决定之前，应充分听取各方意见。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This report aims to evaluate the practical effects of the new measures.",
+        "Please have all representatives comment on the revisions.",
+        "We must distinguish correlation from causation.",
+        "Before making the final decision, the views of all parties should be fully heard."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Before making the final decision, the views of all parties should be fully heard.”"
+    },
+    {
+      "id": "E9-15",
+      "topic": "Formal & nuanced language",
+      "q": "Read the Chinese sentence “长远来看，持续改进比一次性的成果更重要。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This study provides an important basis for subsequent work.",
+        "This conclusion still needs to be verified through independent research.",
+        "In the long run, continuous improvement is more important than a one-time result.",
+        "The relevant departments will further verify the information provided."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “In the long run, continuous improvement is more important than a one-time result.”"
+    }
+  ],
+  [
+    {
+      "id": "E10-1",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “他经过多年努力，终于水到渠成。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Since it has already happened, we should focus on solutions.",
+        "After years of effort, things finally fell into place naturally.",
+        "His explanation skirted the main issue and did not answer the key question.",
+        "Rather than waiting passively for an opportunity, create the conditions proactively."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “After years of effort, things finally fell into place naturally.”"
+    },
+    {
+      "id": "E10-2",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “面对困难，她始终坚持不懈。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "In the face of difficulties, she persevered without giving up.",
+        "This collaboration allowed both sides to learn from each other's strengths.",
+        "I benefited greatly from this experience.",
+        "This task may seem simple, but it actually requires patience and care."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “In the face of difficulties, she persevered without giving up.”"
+    },
+    {
+      "id": "E10-3",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “我们应该实事求是地分析这次失败。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If we focus only on immediate benefits, we may lose more by pursuing less.",
+        "He was not defeated by a temporary setback.",
+        "She is good at viewing the same problem from different perspectives.",
+        "We should analyze this failure objectively and according to the facts."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “We should analyze this failure objectively and according to the facts.”"
+    },
+    {
+      "id": "E10-4",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “他的解释避重就轻，没有回答关键问题。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Although the discussion was heated, it remained reasoned and evidence-based.",
+        "Only after repeated verification did this conclusion stand up to scrutiny.",
+        "His explanation skirted the main issue and did not answer the key question.",
+        "She has always handled things in an orderly and methodical way."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “His explanation skirted the main issue and did not answer the key question.”"
+    },
+    {
+      "id": "E10-5",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “这次合作让双方取长补短。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "After years of effort, things finally fell into place naturally.",
+        "This collaboration allowed both sides to learn from each other's strengths.",
+        "Rather than waiting passively for an opportunity, create the conditions proactively.",
+        "Since it has already happened, we should focus on solutions."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “This collaboration allowed both sides to learn from each other's strengths.”"
+    },
+    {
+      "id": "E10-6",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “如果只看眼前利益，就容易因小失大。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "If we focus only on immediate benefits, we may lose more by pursuing less.",
+        "I benefited greatly from this experience.",
+        "This task may seem simple, but it actually requires patience and care.",
+        "In the face of difficulties, she persevered without giving up."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “If we focus only on immediate benefits, we may lose more by pursuing less.”"
+    },
+    {
+      "id": "E10-7",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “她做事一向有条不紊。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He was not defeated by a temporary setback.",
+        "She is good at viewing the same problem from different perspectives.",
+        "We should analyze this failure objectively and according to the facts.",
+        "She has always handled things in an orderly and methodical way."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “She has always handled things in an orderly and methodical way.”"
+    },
+    {
+      "id": "E10-8",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “与其坐等机会，不如主动创造条件。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "Only after repeated verification did this conclusion stand up to scrutiny.",
+        "His explanation skirted the main issue and did not answer the key question.",
+        "Rather than waiting passively for an opportunity, create the conditions proactively.",
+        "Although the discussion was heated, it remained reasoned and evidence-based."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Rather than waiting passively for an opportunity, create the conditions proactively.”"
+    },
+    {
+      "id": "E10-9",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “这次经验使我受益匪浅。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "This collaboration allowed both sides to learn from each other's strengths.",
+        "I benefited greatly from this experience.",
+        "Since it has already happened, we should focus on solutions.",
+        "After years of effort, things finally fell into place naturally."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “I benefited greatly from this experience.”"
+    },
+    {
+      "id": "E10-10",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “他没有被一时的挫折打倒。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "He was not defeated by a temporary setback.",
+        "This task may seem simple, but it actually requires patience and care.",
+        "In the face of difficulties, she persevered without giving up.",
+        "If we focus only on immediate benefits, we may lose more by pursuing less."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “He was not defeated by a temporary setback.”"
+    },
+    {
+      "id": "E10-11",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “讨论虽然激烈，却始终有理有据。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She is good at viewing the same problem from different perspectives.",
+        "We should analyze this failure objectively and according to the facts.",
+        "She has always handled things in an orderly and methodical way.",
+        "Although the discussion was heated, it remained reasoned and evidence-based."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Although the discussion was heated, it remained reasoned and evidence-based.”"
+    },
+    {
+      "id": "E10-12",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “事情既已发生，我们就应着眼于解决办法。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "His explanation skirted the main issue and did not answer the key question.",
+        "Rather than waiting passively for an opportunity, create the conditions proactively.",
+        "Since it has already happened, we should focus on solutions.",
+        "Only after repeated verification did this conclusion stand up to scrutiny."
+      ],
+      "answer": 2,
+      "explanation": "The sentence means: “Since it has already happened, we should focus on solutions.”"
+    },
+    {
+      "id": "E10-13",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “这项工作看似简单，实际上需要耐心和细心。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "I benefited greatly from this experience.",
+        "This task may seem simple, but it actually requires patience and care.",
+        "After years of effort, things finally fell into place naturally.",
+        "This collaboration allowed both sides to learn from each other's strengths."
+      ],
+      "answer": 1,
+      "explanation": "The sentence means: “This task may seem simple, but it actually requires patience and care.”"
+    },
+    {
+      "id": "E10-14",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “她善于从不同角度看待同一个问题。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "She is good at viewing the same problem from different perspectives.",
+        "In the face of difficulties, she persevered without giving up.",
+        "If we focus only on immediate benefits, we may lose more by pursuing less.",
+        "He was not defeated by a temporary setback."
+      ],
+      "answer": 0,
+      "explanation": "The sentence means: “She is good at viewing the same problem from different perspectives.”"
+    },
+    {
+      "id": "E10-15",
+      "topic": "Mastery & idiomatic meaning",
+      "q": "Read the Chinese sentence “经过反复验证，这个结论才站得住脚。” carefully. What is the most accurate English translation?",
+      "choices": [
+        "We should analyze this failure objectively and according to the facts.",
+        "She has always handled things in an orderly and methodical way.",
+        "Although the discussion was heated, it remained reasoned and evidence-based.",
+        "Only after repeated verification did this conclusion stand up to scrutiny."
+      ],
+      "answer": 3,
+      "explanation": "The sentence means: “Only after repeated verification did this conclusion stand up to scrutiny.”"
+    }
+  ]
+];
+// Convert compact rows into objects; all questions have four choices and a single answer.
+const banksFinal = banks.map((bank, li) => bank.map((r, i) => {
+ const originalChoices = r.slice(2,6);
+ const correctChoice = originalChoices[r[6]];
+ // Shuffle choices so the correct answer is not always in the same position.
+ const choices = [...originalChoices].sort(() => Math.random() - 0.5);
+ return {
+  id:`${li+1}-${i+1}`, topic:r[1], q:r[0],
+  choices, answer:choices.indexOf(correctChoice),
+  explanation:`The best answer is “${correctChoice}.” This follows from the core ${r[1].toLowerCase()} concept being tested.`
+ };
+}));
+let mode="quiz", level=0, index=0, score=0, answers=[], completed=new Set(), unlocked=10, answered=false;
+const activeBanks=()=>mode==="exam"?examBanksFinal:banksFinal;
+const $=id=>document.getElementById(id);
+let timerInterval=null, timeLeft=10;
+function stopTimer(){if(timerInterval!==null){clearInterval(timerInterval);timerInterval=null;}}
+function displayTimer(){
+ const el=$("timer"), box=$("timerStat");
+ if(mode==="exam"){
+  el.textContent=`${Math.floor(timeLeft/60).toString().padStart(2,"0")}:${(timeLeft%60).toString().padStart(2,"0")}`;
+  $("timerUnit").textContent="";
+  box.classList.toggle("urgent",timeLeft<=300);
+ }else{
+  el.textContent=timeLeft;$("timerUnit").textContent="s";box.classList.toggle("urgent",timeLeft<=3);
+ }
+}
+function startTimer(){
+ if(mode==="exam"){
+  if(timerInterval!==null)return;
+  timeLeft=1800;displayTimer();
+  timerInterval=setInterval(()=>{
+   if($("game").classList.contains("hidden")){stopTimer();return;}
+   timeLeft=Math.max(0,timeLeft-1);displayTimer();
+   if(timeLeft===0){stopTimer();answers=answers.map(a=>a===null?-1:a);finishLevel(true);}
+  },1000);
+  return;
+ }
+ stopTimer();timeLeft=10;displayTimer();
+ timerInterval=setInterval(()=>{
+  if($("game").classList.contains("hidden")||answered){stopTimer();return;}
+  timeLeft=Math.max(0,timeLeft-1);displayTimer();
+  if(timeLeft===0){
+   stopTimer();
+   if(answers[index]===null){answers[index]=-1;renderQuestion();}
+   if(index<activeBanks()[level].length-1){$("nextBtn").disabled=false;$("liveScore").textContent="Time is up! Moving to the next question…";setTimeout(()=>{if(!$("game").classList.contains("hidden")&&index<activeBanks()[level].length-1){index++;renderQuestion();}},650);}
+   else {setTimeout(()=>{if(!$("game").classList.contains("hidden")&&index===activeBanks()[level].length-1)finishLevel();},650);}
+  }
+ },1000);
+}
+function renderLevels(){
+ $("levels").innerHTML="";
+ titles.forEach((title,i)=>{
+  const b=document.createElement("button");b.className="level";b.disabled=i+1>unlocked;
+  const done=completed.has(i);
+  b.innerHTML=`${done?'<span class="check">✓</span>':''}<div class="num">${String(i+1).padStart(2,"0")}</div><div class="name">${title}</div><small>${descriptions[i]} · 15 questions</small>`;
+  b.addEventListener("click",()=>startLevel(i));$("levels").appendChild(b);
+ });
+ $("modeNote").textContent=mode==="quiz"?"Quiz mode gives instant feedback and updates your score as you answer.":"Exam mode gives you 30 minutes for each level. Answers and score stay hidden until the level ends.";
+}
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>{
+ mode=b.dataset.mode;document.querySelectorAll(".mode").forEach(x=>x.classList.toggle("active",x===b));renderLevels();
+}));
+function startLevel(i){stopTimer();level=i;index=0;score=0;answers=Array(activeBanks()[level].length).fill(null);answered=false;$("home").classList.add("hidden");$("results").classList.add("hidden");$("game").classList.remove("hidden");renderQuestion();}
+function renderQuestion(){
+ const q=activeBanks()[level][index];answered=answers[index]!==null;
+ $("levelLabel").textContent=`LEVEL ${level+1} · ${mode.toUpperCase()} MODE`;$("gameTitle").textContent=titles[level];
+ $("qCount").textContent=`${index+1}/${activeBanks()[level].length}`;$("score").textContent=score;
+ $("scoreStat").classList.toggle("hidden",mode==="exam");
+ $("progressFill").style.width=`${((index+(answered?1:0))/activeBanks()[level].length)*100}%`;
+ $("topicLabel").textContent=q.topic.toUpperCase();$("question").textContent=q.q;
+ $("options").innerHTML="";
+ q.choices.forEach((choice,j)=>{
+  const b=document.createElement("button");b.className="option";b.innerHTML=`<span class="letter">${"ABCD"[j]}</span><span></span>`;b.lastElementChild.textContent=choice;
+  if(answers[index]===j)b.classList.add("selected");
+  if(answered){b.disabled=true;if(mode==="quiz"){if(j===q.answer)b.classList.add("correct");if(answers[index]===j&&j!==q.answer)b.classList.add("wrong");}}
+  b.addEventListener("click",()=>selectAnswer(j));$("options").appendChild(b);
+ });
+ $("feedback").classList.add("hidden");$("feedback").classList.remove("good","bad");
+ if(answered&&mode==="quiz")showFeedback(q,answers[index]===q.answer);
+ $("nextBtn").disabled=!answered;$("nextBtn").textContent=index===activeBanks()[level].length-1?"Finish level ✓":"Next question →";
+ $("liveScore").textContent=mode==="quiz"?`Score so far: ${score}/${answers.filter(a=>a!==null).length}`:"Your result will be revealed when the level ends.";
+ $("timerStat").classList.remove("hidden");
+ if(mode==="quiz"&&!answered)startTimer();else if(mode==="exam")startTimer();else stopTimer();
+}
+function selectAnswer(choice){
+ if(answers[index]!==null)return;if(mode==="quiz")stopTimer();const q=activeBanks()[level][index];answers[index]=choice;if(choice===q.answer)score++;
+ renderQuestion();
+ if(mode==="quiz")showFeedback(q,choice===q.answer);
+ $("nextBtn").disabled=false;
+}
+function showFeedback(q,correct){const el=$("feedback");el.classList.remove("hidden");el.classList.add(correct?"good":"bad");el.textContent=(correct?"Correct. ":"Not quite. ")+q.explanation;}
+$("nextBtn").addEventListener("click",()=>{if(answers[index]===null)return;if(index<activeBanks()[level].length-1){index++;renderQuestion();}else finishLevel();});
+$("quitBtn").addEventListener("click",()=>{stopTimer();$("game").classList.add("hidden");$("home").classList.remove("hidden");renderLevels();});
+function finishLevel(timeExpired=false){
+ stopTimer();completed.add(level);unlocked=Math.max(unlocked,Math.min(10,level+2));
+ const total=activeBanks()[level].length, pct=Math.round(score/total*100);
+ $("game").classList.add("hidden");$("results").classList.remove("hidden");
+ let review=activeBanks()[level].map((q,i)=>{const picked=answers[i],ok=picked===q.answer;return `<div class="review-item"><strong>${i+1}. ${escapeHtml(q.q)}</strong><div class="${ok?'right':'wrongtext'}">${ok?'Correct':'Incorrect'} · Your answer: ${picked===null||picked===-1?'Not answered (time expired)':escapeHtml(q.choices[picked])}</div><div>Answer: ${escapeHtml(q.choices[q.answer])}</div></div>`}).join("");
+ $("results").innerHTML=`<div class="result"><div class="eyebrow">Level ${level+1} complete</div><div class="score-ring" style="--score:${pct*3.6}deg"><div><strong>${pct}%</strong><span style="color:var(--muted);font-size:.8rem">${score}/${total} correct</span></div></div><h2>${pct>=80?"Excellent work!":pct>=60?"Good progress!":"Keep practicing!"}</h2><p>${mode==="exam"?(timeExpired?"Time expired. Your exam result is now revealed.":"Your exam result is now revealed."):"Your level result is ready."} ${level<9?"Complete the next level to keep progressing.":"You reached the final level!"}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px"><button id="backLevels" class="btn secondary">Back to levels</button>${level<9?'<button id="nextLevel" class="btn">Next level →</button>':''}<button id="retry" class="btn secondary">Retry level</button></div></div><div class="review"><h3>Answer review</h3>${review}</div>`;
+ $("backLevels").addEventListener("click",()=>{$("results").classList.add("hidden");$("home").classList.remove("hidden");renderLevels();window.scrollTo({top:0,behavior:"smooth"});});
+ if($("nextLevel"))$("nextLevel").addEventListener("click",()=>startLevel(level+1));
+ $("retry").addEventListener("click",()=>startLevel(level));
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+renderLevels();
+</script>
+</body>
+</html>
